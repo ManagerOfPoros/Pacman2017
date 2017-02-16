@@ -63,7 +63,7 @@ public class RobotMap {
     
 /*******************Cameras Values***************************************************/
     
-    public final static int[] CAMERA_INDEXES = {0,1,2};
+  //  public final static int[] CAMERA_INDEXES = {0,1,2};
     public final static int NUMBER_OF_CAMERAS = 2;
     public final static int FRONT_CAMERA_IDX = 0;
     public final static int SHOOTER_CAMERA_IDX = 1;

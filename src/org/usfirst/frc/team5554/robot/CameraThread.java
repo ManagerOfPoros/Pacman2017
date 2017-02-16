@@ -35,7 +35,7 @@ public class CameraThread extends Thread
 		/******************************Sets All Of The Guide Lines*********************************/
 
 		gls.put("Shooter", new GuideLines(0, 319, 0, 240, new Scalar(0,0,255), 2));
-		gls.get("Shototer").SetBoundries(2, 319);
+		gls.get("Shooter").SetBoundries(2, 319);
 		gls.put("CenterPoint", new GuideLines(160 , 161 , 120 , 121 , new Scalar(255,0,0), 2));
 		gls.put("GearGuider1", new GuideLines(50 , 100 , 0 , 240 , new Scalar(255,0,0), 2));
 		gls.put("GearGuider2", new GuideLines(200 , 250 , 0 , 240 , new Scalar(255,0,0), 2));
@@ -86,9 +86,8 @@ public class CameraThread extends Thread
 				
 					if(showGearGuide == false)
 					{
-						showGearGuide = true;
 						showFeedLines = false;
-						
+						showGearGuide = true;
 					}
 					else
 					{
@@ -105,10 +104,10 @@ public class CameraThread extends Thread
 				{
 					ignoreButton4 = true;
 				
-					if(showGearGuide == false)
+					if(showFeedLines == false)
 					{
-						showFeedLines = true;
 						showGearGuide = false;
+						showFeedLines = true;
 						
 					}
 					else
@@ -130,7 +129,7 @@ public class CameraThread extends Thread
 					{
 							gls.get("Shooter").NarrowWidth(1);
 					}
-					if(joy.getPOV() == 180)
+					if(xbox.getPOV() == 180)
 					{
 							gls.get("Shooter").DialateWidth(1);
 					}
