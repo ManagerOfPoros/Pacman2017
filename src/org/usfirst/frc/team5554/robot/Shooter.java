@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5554.robot;
 
+import org.usfirst.frc.team5554.Controllers.Motor;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Victor;
@@ -8,7 +10,7 @@ public class Shooter
 {
 	private Motor firstShooter;
 	private Victor scramble;
-	private double Velocity;      			// meters per second 
+//	private double Velocity;      			// meters per second 
 
 	public Shooter(int shooterPort, int scramblePort , Encoder shooterEncoder)
 	{
@@ -43,6 +45,8 @@ public class Shooter
 	
 	public void autoShoot()
 	{
+		//double distanceToBoiler = CameraThread.distance;
+		//enter equation
 	}
 	
 }

@@ -1,25 +1,43 @@
 package org.usfirst.frc.team5554.CommandGroups.Commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 
 import org.usfirst.frc.team5554.robot.Driver;
 
-public class DriveDistance extends InstantCommand
+public class DriveDistance extends Command
 {
 	double wantedValue;
 	Driver driver;
 	
-	public DriveDistance(double _wantedValue, Driver _driver)
+	public DriveDistance(double wantedValue, Driver driver)
 	{
-		super("Drive Distance");
-		wantedValue = _wantedValue;
-		driver = _driver;
+		super("DriveDistance");
+		this.wantedValue = wantedValue;
+		this.driver = driver;
 	}
 	
 	@Override
-	public void initialize()
+	protected void initialize()
 	{
 		driver.DriveDistance(wantedValue, wantedValue);
-		System.out.printf("We drove %d meters!", wantedValue);
+	}
+	
+	@Override
+	protected void execute()
+	{
+		
+	}
+
+	@Override
+	protected boolean isFinished() {
+		
+		if(driver.LeftOnTarget() || driver.RightOnTarget())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

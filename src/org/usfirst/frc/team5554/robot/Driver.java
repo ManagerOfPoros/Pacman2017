@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5554.robot;
 
+import org.usfirst.frc.team5554.Controllers.Motor;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
@@ -93,19 +95,16 @@ public class Driver
 		this.left0.GoDistance(leftDistance);
 		this.left1.GoDistance(leftDistance);
 	}
-	
-	public void DriveSteady(double speed)
+
+	public boolean LeftOnTarget()
 	{
-		right0.SetPID(0.00001, 0, 0.0001);		
-		right1.SetPID(0.0001, 0.001, 0.001);
-		
-		right0.SetPIDType(PIDSourceType.kRate);
-		right1.SetPIDType(PIDSourceType.kRate);
-		
-		this.right0.GoSteady(speed);
-		this.right1.GoSteady(speed);
+		return left0.onTarget();
 	}
 	
+	public boolean RightOnTarget()
+	{
+		return right0.onTarget();
+	}
 		
 		
 }

@@ -47,8 +47,9 @@ public class RobotMap {
     public final static int RIGHT_ENCODER_CHANNELB = 3;
     public final static int SHOOTER_ENCODER_CHANNELA = 4;
     public final static int SHOOTER_ENCODER_CHANNELB = 5;
-    public final static int GEAR_MICROSWITCH_PORT =  6;
-    public final static int RELAY_PORT =  7;
+    public final static int GEAR_MICROSWITCH_PORT_ONE =  6;
+    public final static int GEAR_MICROSWITCH_PORT_TWO =  7;
+    public final static int RELAY_PORT =  8;
     
 /*******************Autonomous Measurement***********************************************/
     public final static int DISTANCE_TO_AIRSHIP_FROM_SIDE = 0; //TODO: Add a real measured value!
@@ -63,10 +64,10 @@ public class RobotMap {
     
 /*******************Cameras Values***************************************************/
     
-  //  public final static int[] CAMERA_INDEXES = {0,1,2};
     public final static int NUMBER_OF_CAMERAS = 2;
     public final static int FRONT_CAMERA_IDX = 0;
     public final static int SHOOTER_CAMERA_IDX = 1;
     public final static double FOCAL_LENGTH = 334.595;
+    public final static double BOILER_WIDTH = 58;
 }
 

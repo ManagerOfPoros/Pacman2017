@@ -26,9 +26,7 @@ public class Robot extends IterativeRobot {
 	private Joystick xbox;
 	/*****************************************Autonomous******************************************/
 	private Command autonomousCommand;
-	private SendableChooser<Command> autoChooser;
-	/*********************************************************************************************/
-	
+	private SendableChooser<Command> autoChooser;	
 	
 	
 	@Override
@@ -46,7 +44,7 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter(RobotMap.MOTOR_SHOOT_ONE, RobotMap.MOTOR_SCRAMBLE, shooterEncoder);
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
-		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT,RobotMap.RELAY_PORT,4);		
+		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT_ONE, RobotMap.GEAR_MICROSWITCH_PORT_TWO,RobotMap.RELAY_PORT,2);		
 		gears.SetLeds(true);
 		
 		/**********************************Joysticks Declaration****************************************************/
@@ -72,7 +70,7 @@ public class Robot extends IterativeRobot {
 		autoChooser.addObject("C4", new Autonomous_C4(driver));
 		SmartDashboard.putData("Autonomous" , autoChooser);
 		
-		/****************************************************************************************************/
+		
 	}
 
 	@Override

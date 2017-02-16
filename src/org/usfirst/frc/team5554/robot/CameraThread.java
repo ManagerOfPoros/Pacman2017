@@ -8,12 +8,14 @@ import org.usfirst.frc.team5554.cameras.GuideLines;
 import org.usfirst.frc.team5554.cameras.VideoBox;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CameraThread extends Thread
 {
 	private Joystick joy;
 	private Joystick xbox;
 	private boolean toSwitch = false;
+	public static double distance = 0;
 	
 	private Map<String,GuideLines> gls = new HashMap<String,GuideLines>();
 	
@@ -161,15 +163,24 @@ public class CameraThread extends Thread
 					screen.stream(cameras.GetStream());
 				}
 				
-				
-				
-				
-
 			}
 			else
 			{
 				cameras.SetStreamer(RobotMap.FRONT_CAMERA_IDX);
 				screen.stream(cameras.GetStream());
+			}
+			
+			/***********************************Dashboard Widgets****************************************************/
+			
+			distance = gls.get("Shooter").GetDistance(RobotMap.FOCAL_LENGTH, RobotMap.BOILER_WIDTH);
+			
+			if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX)
+			{
+				SmartDashboard.putNumber("Distance: ", CameraThread.distance);
+			}
+			else
+			{
+				SmartDashboard.putNumber("Distance: ", 0);
 			}
 			
 		}

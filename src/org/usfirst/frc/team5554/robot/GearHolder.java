@@ -7,13 +7,15 @@ public class GearHolder {
 	private int indicatorTimer;
 	private boolean indicator = false;
 	private boolean startCounting = false;
-	private DigitalInput MicroSwitch;
+	private DigitalInput LMicroSwitch;
+	private DigitalInput RMicroSwitch;
 	private DigitalOutput LEDs;
 	private int timer = 0;
 	
-	public GearHolder(int MICROSWITCH_PORT, int LEDS_PORTS,  int indicatorTime)
+	public GearHolder(int LeftMicroSwitchPort, int RightMicroSwitchPort, int LEDS_PORTS,  int indicatorTime)
 	{
-		MicroSwitch = new DigitalInput(MICROSWITCH_PORT);
+		LMicroSwitch = new DigitalInput(LeftMicroSwitchPort);
+		RMicroSwitch = new DigitalInput(RightMicroSwitchPort);
 		LEDs = new DigitalOutput(LEDS_PORTS);
 		indicatorTimer = indicatorTime;
 	}
@@ -21,7 +23,7 @@ public class GearHolder {
 	public void isGearIn()
 	{
 
-		if (MicroSwitch.get()) // micro is pressed and indicator false
+		if (LMicroSwitch.get() || RMicroSwitch.get()) // micro is pressed and indicator false
 		{
 			indicator = true; // gear is in
 			startCounting = true;
