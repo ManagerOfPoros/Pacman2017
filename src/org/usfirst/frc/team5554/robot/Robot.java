@@ -2,6 +2,7 @@ package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 
 	/****************************************Operator Objects**********************************************/
+	
 	private Driver driver;
 	private Shooter shooter;
 	private Feeder feeder;
@@ -22,11 +24,17 @@ public class Robot extends IterativeRobot {
 	private CameraThread streamer;
 	
 	/****************************************Joysticks********************************************/
+	
 	private Joystick joy;
 	private Joystick xbox;
+	
 	/*****************************************Autonomous******************************************/
+	
 	private Command autonomousCommand;
-	private SendableChooser<Command> autoChooser;	
+	private SendableChooser<Command> redChooser;	
+	private SendableChooser<Command> blueChooser;
+	private Command redSelected;
+	private Command blueSelected;
 	
 	
 	@Override
@@ -59,25 +67,43 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		autoChooser = new SendableChooser<Command>();
-		autoChooser.addDefault("Empty", new Autonomous_Empty());
-		autoChooser.addObject("A1", new Autonomous_A1(driver));
-		autoChooser.addObject("A2", new Autonomous_A2(driver));
-		autoChooser.addObject("B", new Autonomous_B(driver));
-		autoChooser.addObject("C1", new Autonomous_C1(driver, shooter));
-		autoChooser.addObject("C2", new Autonomous_C2(driver));
-		autoChooser.addObject("C3", new Autonomous_C3(driver, shooter));
-		autoChooser.addObject("C4", new Autonomous_C4(driver));
-		SmartDashboard.putData("Autonomous" , autoChooser);
+		redChooser = new SendableChooser<Command>();
+		redChooser.addDefault("Empty", new Autonomous_Empty());
+		redChooser.addObject("A1", new Autonomous_A1(driver));
+		redChooser.addObject("A2", new Autonomous_A2(driver));
+		redChooser.addObject("B", new Autonomous_B(driver));
+		redChooser.addObject("C1", new Autonomous_C1(driver, shooter));
+		redChooser.addObject("C2", new Autonomous_C2(driver));
+		redChooser.addObject("C3", new Autonomous_C3(driver, shooter));
+		redChooser.addObject("C4", new Autonomous_C4(driver));
+		SmartDashboard.putData("Autonomous" , redChooser);
 		
+		blueChooser = new SendableChooser<Command>();
+		blueChooser.addDefault("Empty", new Autonomous_Empty());
+		blueChooser.addObject("D1", new Autonomous_D1(driver));
+		blueChooser.addObject("D2", new Autonomous_D2(driver));
+		blueChooser.addObject("E", new Autonomous_E(driver));
+		blueChooser.addObject("F1", new Autonomous_F1(driver, shooter));
+		blueChooser.addObject("F2", new Autonomous_F2(driver));
+		blueChooser.addObject("F3", new Autonomous_F3(driver, shooter));
+		blueChooser.addObject("F4", new Autonomous_F4(driver));
+		SmartDashboard.putData("Autonomous" , blueChooser);
 		
 	}
 
 	@Override
 	public void autonomousInit() 
 	{
-		autonomousCommand = (Command) autoChooser.getSelected();
-		autonomousCommand.start();
+		//autonomousCommand = (Command) redChooser.getSelected();
+		//autonomousCommand.start();
+		redSelected = redChooser.getSelected();
+		blueSelected = blueChooser.getSelected();
+		
+		if( redSelected == new Autonomous_Empty()){
+			System.out.println("runs blue");
+		}		
+		
+		
 	}
 
 	@Override
@@ -109,7 +135,7 @@ public class Robot extends IterativeRobot {
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
 		{
-			shooter.shoot(-0.8);
+			shooter.shoot(-0.5);
 		}
 		else
 		{

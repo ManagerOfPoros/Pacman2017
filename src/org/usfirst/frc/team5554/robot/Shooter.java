@@ -25,10 +25,6 @@ public class Shooter
 		firstShooter.set(speed);
 	}
 	
-	public void distanceToSpeed(double distance){ //gets the distance from the camera.
-		//given a distance, we'll put it in an equation that we get from excel and get the speed in pwm units.
-	}
-	
 	public void maintainSpeed(double vel)              // gets velocity in m/s
 	{
 		firstShooter.SetPID(0.2, 0.2, 0, 1);               //find the right f value
