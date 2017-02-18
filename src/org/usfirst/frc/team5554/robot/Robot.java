@@ -45,10 +45,10 @@ public class Robot extends IterativeRobot {
 		Encoder leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA, RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
 		Encoder rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA, RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
 		Encoder shooterEncoder = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		
+		ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 		/***********************************Declaring Operator Objects***********************************************/
 		
-		driver = new Driver(RobotMap.MOTOR_LEFT_ONE , RobotMap.MOTOR_LEFT_TWO, RobotMap.MOTOR_RIGHT_ONE, RobotMap.MOTOR_RIGHT_TWO , leftEncoder, rightEncoder);
+		driver = new Driver(RobotMap.MOTOR_LEFT , RobotMap.MOTOR_RIGHT,leftEncoder,rightEncoder,gyro);
 		shooter = new Shooter(RobotMap.MOTOR_SHOOT_ONE, RobotMap.MOTOR_SCRAMBLE, shooterEncoder);
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);

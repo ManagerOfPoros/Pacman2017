@@ -4,10 +4,8 @@ public class RobotMap {
 
 /*******************Motor Ports**************************************************************************/
     
-	public final static int MOTOR_LEFT_ONE = 0;
-    public final static int MOTOR_LEFT_TWO = 1;
-    public final static int MOTOR_RIGHT_ONE = 2;
-    public final static int MOTOR_RIGHT_TWO = 3;
+	public final static int MOTOR_LEFT = 0;
+    public final static int MOTOR_RIGHT = 2;
     public final static int MOTOR_FEEDER = 5;
     public final static int MOTOR_SHOOT_ONE = 8;
     public final static int MOTOR_SCRAMBLE = 6;

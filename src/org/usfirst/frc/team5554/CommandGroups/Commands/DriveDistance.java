@@ -31,7 +31,7 @@ public class DriveDistance extends Command
 	@Override
 	protected boolean isFinished() {
 		
-		if(driver.LeftOnTarget() || driver.RightOnTarget())
+		if(driver.LeftOnTarget(0.1) && driver.RightOnTarget(0.1))
 		{
 			return true;
 		}

@@ -2,15 +2,19 @@ package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.Controllers.Motor;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
 public class Driver
 {
-	private Motor left0;
-	private Motor left1;
-	private Motor right0;
-	private Motor right1;
+	private Motor left;
+	private Motor right;	
+	
+	private Encoder leftEncoder;
+	private Encoder rightEncoder;
+	private ADXRS450_Gyro gyro;
+	
 	
 	/**
 	 * The constructor configurates the motors objects to certain ports
@@ -19,21 +23,11 @@ public class Driver
 	 * @param MOTOR_RIGHT port for right motor
 	 * Author: Gil Meri
 	 */
-	public Driver(int motorLeftOne , int motorLeftTwo , int motorRightOne , int motorRightTwo , Encoder leftEnc , Encoder rightEnc) 
-	{
+	public Driver(int motorLeft, int motorRight , Encoder leftEnc , Encoder rightEnc , ADXRS450_Gyro gyro) 
+	{	
+		left = new Motor(motorLeft);
 		
-		left0 = new Motor(motorLeftOne);
-		left0.SetFeedbackDevice(leftEnc);
-		
-		left1 = new Motor(motorLeftTwo);
-		left1.SetFeedbackDevice(leftEnc);
-		
-		right0 = new Motor(motorRightOne);
-		right0.SetFeedbackDevice(leftEnc);
-		
-		right1 = new Motor(motorRightTwo);
-		right1.SetFeedbackDevice(leftEnc);
-		
+		right = new Motor(motorRight);		
 	}
 	
 	/**
@@ -56,54 +50,49 @@ public class Driver
 		if (powerRight > 1)powerRight=1;
 		if (powerRight < -1)powerRight=-1;
 		
-		//this.left0.set(powerLeft);
-		//this.left1.set(powerLeft);
-		this.right0.set(powerRight);
-		this.right1.set(powerRight);
+		this.left.set(powerLeft);
+		this.right.set(powerRight);
 	}
 	
-	public void Drive(double speed)
-	{
-		//here it will start the motors for the driver given a speed
-		//to drive an exact distance
-	}
 	
 	public void Spin(double degrees)
 	{				
-		if(degrees > 0){
-			//then spin right
-		}else if(degrees < 0){
-			degrees *= -1;
-			//then spin left
-		}
+		right.SetFeedbackDevice(gyro);
+		left.SetFeedbackDevice(gyro);
+		
+		right.SetPIDType(PIDSourceType.kDisplacement);
+		left.SetPIDType(PIDSourceType.kDisplacement);		
+		
+		right.SetPID(1, 0.001, 2);
+		left.SetPID(1, 0.001, 2);
+		
+		this.right.GoDistance(degrees);
+		this.left.GoDistance(degrees);
 	}	
 	
 	public void DriveDistance(double leftDistance, double rightDistance)
-	{
-		right0.SetPID(1, 0.001, 2);
-		right1.SetPID(1, 0.001, 2);
-		left0.SetPID(1, 0.001, 2);
-		left1.SetPID(1, 0.001, 2);
+	{		
+		right.SetFeedbackDevice(rightEncoder);
+		left.SetFeedbackDevice(leftEncoder);
 		
-		right0.SetPIDType(PIDSourceType.kDisplacement);
-		right1.SetPIDType(PIDSourceType.kDisplacement);
-		left0.SetPIDType(PIDSourceType.kDisplacement);
-		left1.SetPIDType(PIDSourceType.kDisplacement);
+		right.SetPIDType(PIDSourceType.kDisplacement);
+		left.SetPIDType(PIDSourceType.kDisplacement);
 		
-		this.right0.GoDistance(rightDistance);
-		this.right1.GoDistance(rightDistance);
-		this.left0.GoDistance(leftDistance);
-		this.left1.GoDistance(leftDistance);
+		right.SetPID(1, 0.001, 2);
+		left.SetPID(1, 0.001, 2);
+		
+		this.right.GoDistance(rightDistance);
+		this.left.GoDistance(leftDistance);
 	}
 
-	public boolean LeftOnTarget()
+	public boolean LeftOnTarget(double tolerance)
 	{
-		return left0.onTarget();
+		return left.onTarget(tolerance);
 	}
 	
-	public boolean RightOnTarget()
+	public boolean RightOnTarget(double tolerance)
 	{
-		return right0.onTarget();
+		return right.onTarget(tolerance);
 	}
 		
 		

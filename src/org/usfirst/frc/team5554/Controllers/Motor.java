@@ -1,12 +1,12 @@
 package org.usfirst.frc.team5554.Controllers;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Victor;
 
 public class Motor extends Victor{
 
-	private Encoder encoder;
+	private PIDSource PidSource;
 	private PIDController controller;
 	
 	
@@ -16,14 +16,14 @@ public class Motor extends Victor{
 	}
 	
 	
-	public void SetFeedbackDevice(Encoder enc)          
+	public void SetFeedbackDevice(PIDSource PidSource)          
 	{
-		this.encoder = enc;
+		this.PidSource = PidSource;
 	}
 
 	public void SetPIDType(PIDSourceType type)
 	{
-		encoder.setPIDSourceType(type);
+		PidSource.setPIDSourceType(type);
 	}
 	
 	public void SetPID(double p, double i, double d)
@@ -42,7 +42,7 @@ public class Motor extends Victor{
 		if(controller == null)
 		{
 			System.out.println("PID controller created");
-			controller = new PIDController(p, i, d,f, encoder, this);
+			controller = new PIDController(p, i, d,f, PidSource, this);
 		}
 		else
 		{
@@ -78,17 +78,15 @@ public class Motor extends Victor{
 		StartPIDLoop(speed);
 	}
 	
-	public void disController(){
+	public void disController()
+	{
 		controller.disable();
 	}
 	
-	public boolean onTarget(){
-		return controller.onTarget();
-	}
-	
-	public PIDController getcontroller()
-	{
-		return controller;
+	public boolean onTarget(double tolerance)
+	{		
+		controller.setPercentTolerance(tolerance);
+		return controller.onTarget();		
 	}
 
 
