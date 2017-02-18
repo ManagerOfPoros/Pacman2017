@@ -93,16 +93,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() 
-	{
-		//autonomousCommand = (Command) redChooser.getSelected();
-		//autonomousCommand.start();
-		redSelected = redChooser.getSelected();
-		blueSelected = blueChooser.getSelected();
-		
-		if( redSelected == new Autonomous_Empty()){
-			System.out.println("runs blue");
-		}		
-		
+	{		
 		
 	}
 
