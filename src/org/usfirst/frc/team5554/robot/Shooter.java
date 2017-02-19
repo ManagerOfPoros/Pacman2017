@@ -2,6 +2,7 @@ package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.Controllers.Motor;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Victor;
@@ -10,14 +11,14 @@ public class Shooter
 {
 	private Motor firstShooter;
 	private Victor scramble;
-//	private double Velocity;      			// meters per second 
+	private Encoder encoder;
 
-	public Shooter(int shooterPort, int scramblePort , Encoder shooterEncoder)
+	public Shooter(int shooterPort, int scramblePort , int leftEncPort0 , int leftEncPort1)
 	{
 		firstShooter = new Motor(shooterPort);
 		scramble = new Victor(scramblePort);
 		
-		firstShooter.SetFeedbackDevice(shooterEncoder);
+		encoder = new Encoder(leftEncPort0 , leftEncPort1 , true , EncodingType.k4X);
 	}
 	
 	public void shoot(double speed)
@@ -27,9 +28,10 @@ public class Shooter
 	
 	public void maintainSpeed(double vel)              // gets velocity in m/s
 	{
-		firstShooter.SetPID(0.2, 0.2, 0, 1);               //find the right f value
-				
+		firstShooter.SetFeedbackDevice(encoder);
 		firstShooter.SetPIDType(PIDSourceType.kRate);
+		
+		firstShooter.SetPID(0.2, 0.2, 0, 1);               //find the right f value
 		
 		this.firstShooter.GoSteady(vel);
 	}

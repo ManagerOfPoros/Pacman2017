@@ -2,9 +2,6 @@ package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -36,20 +33,24 @@ public class Robot extends IterativeRobot {
 	private Command redSelected;
 	private Command blueSelected;
 	
+	/****************************************Flags************************************************/
+	
+	public static boolean isInShootingMode;
+	public static boolean isInAutonomousMode;
+	
 	
 	@Override
 	public void robotInit() 
 	{
-		/***********************************Declaring Sensors********************************************************/
 		
-		Encoder leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA, RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		Encoder rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA, RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		Encoder shooterEncoder = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 		/***********************************Declaring Operator Objects***********************************************/
 		
-		driver = new Driver(RobotMap.MOTOR_LEFT , RobotMap.MOTOR_RIGHT,leftEncoder,rightEncoder,gyro);
-		shooter = new Shooter(RobotMap.MOTOR_SHOOT_ONE, RobotMap.MOTOR_SCRAMBLE, shooterEncoder);
+		driver = new Driver(RobotMap.MOTOR_LEFT , RobotMap.MOTOR_RIGHT,
+				 			RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB ,
+				 			RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB,
+				 			RobotMap.GYRO_PORT);
+		shooter = new Shooter(RobotMap.MOTOR_SHOOT_ONE, RobotMap.MOTOR_SCRAMBLE, RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB);
+		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
 		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT_ONE, RobotMap.GEAR_MICROSWITCH_PORT_TWO,RobotMap.RELAY_PORT,2);		
@@ -67,6 +68,7 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
+		//Red Alliance
 		redChooser = new SendableChooser<Command>();
 		redChooser.addDefault("Empty", new Autonomous_Empty());
 		redChooser.addObject("A1", new Autonomous_A1(driver));
@@ -78,6 +80,7 @@ public class Robot extends IterativeRobot {
 		redChooser.addObject("C4", new Autonomous_C4(driver));
 		SmartDashboard.putData("Autonomous" , redChooser);
 		
+		//Blue Alliance
 		blueChooser = new SendableChooser<Command>();
 		blueChooser.addDefault("Empty", new Autonomous_Empty());
 		blueChooser.addObject("D1", new Autonomous_D1(driver));
@@ -94,19 +97,46 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() 
 	{		
+		//This section determines that if the blue autonomous selected
+		//is empty then the autonoumous command selected will be from the 
+		//red chooser and the opposite.
+		//If both are selected empty then nothing will happen during the autonomous period.
+		//If both sides are picked then nothing will happen during the autonomous period.
 		
+		redSelected = redChooser.getSelected();
+		blueSelected = blueChooser.getSelected();
+		
+		if(blueSelected.toString().equals("Autonomous_Empty") && redSelected.toString().equals("Autonomous_Empty"))
+		{
+			autonomousCommand = new Autonomous_Empty();
+		}
+		else if(blueSelected.toString().equals("Autonomous_Empty"))
+		{
+			autonomousCommand = redSelected;
+		}
+		else if(redSelected.toString().equals("Autonomous_Empty"))
+		{
+			autonomousCommand = blueSelected;
+		}
+		else
+		{
+			autonomousCommand = new Autonomous_Empty();
+		}
+		
+		autonomousCommand.start();
 	}
 
 	@Override
 	public void autonomousPeriodic() 
 	{
 		Scheduler.getInstance().run();
+		isInAutonomousMode = isAutonomous();
 	}
 	
 	@Override
 	public void teleopInit()
 	{
-		streamer.SetSwitch(true);
+		CameraThread.toSwitch = true;
 	}
 
 	@Override
@@ -116,21 +146,26 @@ public class Robot extends IterativeRobot {
 		
 		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_Y_AXIS), joy.getRawAxis(RobotMap.JOYSTICK_Z_AXIS),
 				joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS));
-		
 		/****************************************** Shooter&Scramble ********************************************/
 		
 		//Shooter
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
 		{
 			shooter.autoShoot();
+			Robot.isInShootingMode = true;
+			driver.disable();
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
 		{
 			shooter.shoot(-0.5);
+			Robot.isInShootingMode = false;
+			driver.enable();
 		}
 		else
 		{
 			shooter.shoot(0);
+			Robot.isInShootingMode = false;
+			driver.enable();
 		}
 		
 		
@@ -179,12 +214,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic()
 	{
-		streamer.SetSwitch(false);
+		CameraThread.toSwitch = false;
+		Robot.isInShootingMode = false;
 	}
 
 	@Override
 	public void testPeriodic() 
 	{
 	}
+	
 }
 

@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5554.robot;
 
+import edu.wpi.first.wpilibj.SPI;
+
 public class RobotMap {
 
 /*******************Motor Ports**************************************************************************/
@@ -48,6 +50,7 @@ public class RobotMap {
     public final static int GEAR_MICROSWITCH_PORT_ONE =  6;
     public final static int GEAR_MICROSWITCH_PORT_TWO =  7;
     public final static int RELAY_PORT =  8;
+    public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
 /*******************Autonomous Measurement***********************************************/
     public final static int DISTANCE_TO_AIRSHIP_FROM_SIDE = 0; //TODO: Add a real measured value!
