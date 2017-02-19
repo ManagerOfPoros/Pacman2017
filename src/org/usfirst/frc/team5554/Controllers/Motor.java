@@ -9,12 +9,10 @@ public class Motor extends Victor{
 	private PIDSource PidSource;
 	private PIDController controller;
 	
-	
 	public Motor(int port) 
 	{
 		super(port);
 	}
-	
 	
 	public void SetFeedbackDevice(PIDSource PidSource)          
 	{
@@ -50,8 +48,10 @@ public class Motor extends Victor{
 		}
 	}
 	
-	public void StartPIDLoop(double SetPoint)
+	public void StartPIDLoop(double SetPoint , boolean invertMotor)
 	{
+		setInverted(invertMotor);
+		
 		if(controller==null)
 		{
 			System.out.println("PIDController is null");
@@ -67,26 +67,34 @@ public class Motor extends Victor{
 		}
 	}
 	
-	public void GoDistance(double distance)
+	public void GoDistance(double distance , boolean invertMotor)
 	{
-		StartPIDLoop(distance);
+		StartPIDLoop(distance , invertMotor);
 	}
 	
 
-	public void GoSteady(double speed)
+	public void GoSteady(double speed, boolean invertMotor)
 	{
-		StartPIDLoop(speed);
+		StartPIDLoop(speed , invertMotor);
 	}
 	
 	public void disController()
 	{
-		controller.disable();
+		if(controller != null)
+		{
+			controller.disable();
+		}
 	}
 	
 	public boolean onTarget(double tolerance)
 	{		
 		controller.setPercentTolerance(tolerance);
 		return controller.onTarget();		
+	}
+	
+	public int GetSomething()
+	{
+		return this.getChannel();
 	}
 
 

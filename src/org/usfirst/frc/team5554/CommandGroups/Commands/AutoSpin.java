@@ -23,7 +23,7 @@ public class AutoSpin extends Command
 	@Override
     protected void initialize() 
 	{
-    	driver.Spin(degrees);
+    	driver.Spin(degrees , true, false);
     }
 
 	@Override

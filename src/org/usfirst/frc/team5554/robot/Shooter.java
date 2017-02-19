@@ -19,6 +19,7 @@ public class Shooter
 		scramble = new Victor(scramblePort);
 		
 		encoder = new Encoder(leftEncPort0 , leftEncPort1 , true , EncodingType.k4X);
+		encoder.setDistancePerPulse(15.24 / 360);
 	}
 	
 	public void shoot(double speed)
@@ -33,7 +34,7 @@ public class Shooter
 		
 		firstShooter.SetPID(0.2, 0.2, 0, 1);               //find the right f value
 		
-		this.firstShooter.GoSteady(vel);
+		this.firstShooter.GoSteady(vel , false);
 	}
 		
 	public void scramble(double speed)
@@ -43,8 +44,15 @@ public class Shooter
 	
 	public void autoShoot()
 	{
-		//double distanceToBoiler = CameraThread.distance;
-		//enter equation
+		double velocity = 20;
+		maintainSpeed(velocity);
+		
+		System.out.println("The speed is: " + encoder.getRate());
+	}
+	
+	public void disController()
+	{
+		firstShooter.disController();
 	}
 	
 }

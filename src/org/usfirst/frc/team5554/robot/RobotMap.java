@@ -7,10 +7,10 @@ public class RobotMap {
 /*******************Motor Ports**************************************************************************/
     
 	public final static int MOTOR_LEFT = 0;
-    public final static int MOTOR_RIGHT = 2;
-    public final static int MOTOR_FEEDER = 5;
-    public final static int MOTOR_SHOOT_ONE = 8;
-    public final static int MOTOR_SCRAMBLE = 6;
+    public final static int MOTOR_RIGHT = 1;
+    public final static int MOTOR_FEEDER = 6;
+    public final static int MOTOR_SHOOTER = 3;
+    public final static int MOTOR_SCRAMBLE = 2;
 	public final static int MOTOR_CLIMBER = 7; //TODO: Add a real engine port!
     
 /*******************Joystick Ports***************************************************************/
@@ -18,16 +18,16 @@ public class RobotMap {
 	public final static int DRIVER_JOYSTICK_PORT = 0;
     public final static int DRIVER_XBOXJOYSTICK_PORT = 1;
     
-/****************************Buttons for Joysticks*******************************************************/    
+/****************************IO for Joysticks*******************************************************/    
     //Joystick Controller
     public final static int JOYSTICK_Y_AXIS = 1; // Forward and backward joystick axis
     public final static int JOYSTICK_Z_AXIS = 2; // Spinning joystick controller axis
+	public final static int JOYSTICK_X_AXIS = 0;
     public final static int JOYSTICK_SLIDER_AXIS = 3; // Slider
     public final static int JOYSTICK_FEEDER_BUTTON = 1; // Joystick trigger
     public final static int JOYSTICK_CAM_SWITCH = 2; // Thumb button
     public final static int JOYSTICK_SHOW_GEARGL = 3;
     public final static int JOYSTICK_SHOW_FEEDGL = 4;
-    public final static int[] BUTTONS_OF_CAMERAS = {10,11,12}; // Order: Forward Camera, Inside Camera, Shooter Camera
     
     //XBOX Controller
     public final static int XBOX_JOYSTICK_AUTO_SHOOT = 3; // RT Axis
@@ -65,10 +65,12 @@ public class RobotMap {
     
 /*******************Cameras Values***************************************************/
     
-    public final static int NUMBER_OF_CAMERAS = 2;
-    public final static int FRONT_CAMERA_IDX = 0;
-    public final static int SHOOTER_CAMERA_IDX = 1;
+    public final static int NUMBER_OF_CAMERAS = 3;
+    public final static int FRONT_CAMERA_IDX = 2;
+    public final static int SYSTEMS_CAMERA_IDX = 1;
+    public final static int SHOOTER_CAMERA_IDX = 0;
     public final static double FOCAL_LENGTH = 334.595;
     public final static double BOILER_WIDTH = 58;
+
 }
 

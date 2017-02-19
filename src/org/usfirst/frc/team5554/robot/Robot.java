@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
+import org.usfirst.frc.team5554.Controllers.Motor;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -10,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
-
+		
 	/****************************************Operator Objects**********************************************/
 	
 	private Driver driver;
@@ -42,14 +43,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() 
 	{
+		/****************************************Controllers********************************************/
+		
+		Motor left = new Motor(RobotMap.MOTOR_LEFT);
+		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
 		
 		/***********************************Declaring Operator Objects***********************************************/
 		
-		driver = new Driver(RobotMap.MOTOR_LEFT , RobotMap.MOTOR_RIGHT,
+		driver = new Driver(left, right,
 				 			RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB ,
 				 			RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB,
 				 			RobotMap.GYRO_PORT);
-		shooter = new Shooter(RobotMap.MOTOR_SHOOT_ONE, RobotMap.MOTOR_SCRAMBLE, RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB);
+		shooter = new Shooter(RobotMap.MOTOR_SHOOTER, RobotMap.MOTOR_SCRAMBLE, RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
@@ -78,7 +83,7 @@ public class Robot extends IterativeRobot {
 		redChooser.addObject("C2", new Autonomous_C2(driver));
 		redChooser.addObject("C3", new Autonomous_C3(driver, shooter));
 		redChooser.addObject("C4", new Autonomous_C4(driver));
-		SmartDashboard.putData("Autonomous" , redChooser);
+		SmartDashboard.putData("RedAutonomous" , redChooser);
 		
 		//Blue Alliance
 		blueChooser = new SendableChooser<Command>();
@@ -90,7 +95,7 @@ public class Robot extends IterativeRobot {
 		blueChooser.addObject("F2", new Autonomous_F2(driver));
 		blueChooser.addObject("F3", new Autonomous_F3(driver, shooter));
 		blueChooser.addObject("F4", new Autonomous_F4(driver));
-		SmartDashboard.putData("Autonomous" , blueChooser);
+		SmartDashboard.putData("BlueAutonomous" , blueChooser);
 		
 	}
 
@@ -144,8 +149,8 @@ public class Robot extends IterativeRobot {
 	{
 		/****************************************** Driving ********************************************/
 		
-		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_Y_AXIS), joy.getRawAxis(RobotMap.JOYSTICK_Z_AXIS),
-				joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS));
+		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS) , joy);
+	
 		/****************************************** Shooter&Scramble ********************************************/
 		
 		//Shooter
@@ -159,18 +164,20 @@ public class Robot extends IterativeRobot {
 		{
 			shooter.shoot(-0.5);
 			Robot.isInShootingMode = false;
+			shooter.disController();
 			driver.enable();
 		}
 		else
 		{
 			shooter.shoot(0);
 			Robot.isInShootingMode = false;
+			shooter.disController();
 			driver.enable();
 		}
 		
 		
 		//Scramble
-		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1)
+		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 || Robot.isInShootingMode)
 		{
 			shooter.scramble(0.8);
 		}
@@ -185,7 +192,7 @@ public class Robot extends IterativeRobot {
     	
 		/****************************************** Feeder *********************************************/
 		
-		if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_BUTTON))
+		if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_BUTTON) || Robot.isInShootingMode)
 		{
 			feeder.feed(0.8);
 		}

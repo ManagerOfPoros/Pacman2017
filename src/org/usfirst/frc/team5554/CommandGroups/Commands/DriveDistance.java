@@ -19,7 +19,7 @@ public class DriveDistance extends Command
 	@Override
 	protected void initialize()
 	{
-		driver.DriveDistance(wantedValue, wantedValue);
+		driver.DriveDistance(wantedValue, wantedValue , false);
 	}
 	
 	@Override
