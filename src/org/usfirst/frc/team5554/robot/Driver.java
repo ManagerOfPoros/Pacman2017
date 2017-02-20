@@ -1,15 +1,13 @@
 package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.Controllers.Motor;
-
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
 public class Driver extends RobotDrive
 {
@@ -28,16 +26,16 @@ public class Driver extends RobotDrive
 	 * @param MOTOR_RIGHT port for right motor
 	 * Author: Gil Meri
 	 */
-	public Driver(Motor left, Motor right , int leftEncPort0, int leftEncPort1, int rightEncPort0, int rightEncPort1 , SPI.Port gyroPort) 
+	public Driver(Motor left, Motor right , Encoder leftEnc, Encoder rightEnc, ADXRS450_Gyro gyro) 
 	{			
 		super(left , right);	
 		
 		setSafetyEnabled(true);
 		
-		leftEncoder = new Encoder(leftEncPort0 , leftEncPort1 , true , EncodingType.k4X);
-		rightEncoder = new Encoder(rightEncPort0 , rightEncPort1 , true , EncodingType.k4X);
+		this.leftEncoder = leftEnc;
+		this.rightEncoder = rightEnc;
 		
-		//gyro = new ADXRS450_Gyro(gyroPort);		
+		this.gyro = gyro;		
 	}
 	
 	/**
@@ -50,6 +48,12 @@ public class Driver extends RobotDrive
 	 */
 	public void Moving(double slider, Joystick joy) 
 	{
+		m_rearLeftMotor.setInverted(false);
+		m_rearRightMotor.setInverted(false);
+		
+		joy.setAxisChannel(AxisType.kX, 2);
+		joy.setAxisChannel(AxisType.kZ, 0);
+		
 		if(isEnabled)
 		{
 			slider = (-slider+1)/2;
@@ -71,6 +75,11 @@ public class Driver extends RobotDrive
 			Timer.delay(0.005);
 		}
 		
+	}
+	
+	public void autonomousDrive(double speed)
+	{
+		drive(speed, 0);
 	}
 	
 	

@@ -6,38 +6,30 @@ import org.usfirst.frc.team5554.robot.Driver;
 
 public class DriveDistance extends Command
 {
-	double wantedValue;
-	Driver driver;
+	private double speed;
+	private Driver driver;
 	
-	public DriveDistance(double wantedValue, Driver driver)
+	public DriveDistance(double speed, Driver driver, double timeout)
 	{
-		super("DriveDistance");
-		this.wantedValue = wantedValue;
+		super("DriveDistance", timeout);
+		this.speed = speed;
 		this.driver = driver;
 	}
 	
 	@Override
 	protected void initialize()
 	{
-		driver.DriveDistance(wantedValue, wantedValue , false);
 	}
 	
 	@Override
 	protected void execute()
 	{
-		
+		driver.autonomousDrive(speed);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		
-		if(driver.LeftOnTarget(0.1) && driver.RightOnTarget(0.1))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 }

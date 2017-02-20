@@ -10,10 +10,10 @@ public class Autonomous_A1 extends CommandGroup
 {
 	public Autonomous_A1(Driver driver)
 	{
-		addSequential(new DriveDistance(RobotMap.DISTANCE_TO_BASELINE_FROM_START + RobotMap.ROBOT_LENGTH, driver));
+		addSequential(new DriveDistance(0.5, driver , 2));
 		addSequential(new AutoSpin(-RobotMap.DEGREES_TO_TURN_TO_AIRSHIP, driver));
 		addSequential(new AutoSpin(RobotMap.DEGREES_TO_TURN_TO_AIRSHIP, driver));
-		addSequential(new DriveDistance(RobotMap.DISTANCE_TO_HOPPER_FROM_BASELINE, driver));
+		addSequential(new DriveDistance(0.5, driver , 2));
 		
 	}
 }

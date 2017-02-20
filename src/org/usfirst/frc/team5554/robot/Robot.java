@@ -3,6 +3,9 @@ package org.usfirst.frc.team5554.robot;
 import org.usfirst.frc.team5554.CommandGroups.*;
 import org.usfirst.frc.team5554.Controllers.Motor;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -40,21 +43,32 @@ public class Robot extends IterativeRobot {
 	public static boolean isInAutonomousMode;
 	
 	
+	
+	int delayCount; // for tests only!!!!!!!!!!!!!!
+	
+	
 	@Override
 	public void robotInit() 
 	{
 		/****************************************Controllers********************************************/
 		
+		//Driving
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
+		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		leftEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		rightEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		ADXRS450_Gyro gyro = new ADXRS450_Gyro(RobotMap.GYRO_PORT);
 		
+		//Shooter
+		Encoder shooterEnc = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA , RobotMap.SHOOTER_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		shooterEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+				
 		/***********************************Declaring Operator Objects***********************************************/
 		
-		driver = new Driver(left, right,
-				 			RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB ,
-				 			RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB,
-				 			RobotMap.GYRO_PORT);
-		shooter = new Shooter(RobotMap.MOTOR_SHOOTER, RobotMap.MOTOR_SCRAMBLE, RobotMap.SHOOTER_ENCODER_CHANNELA, RobotMap.SHOOTER_ENCODER_CHANNELB);
+		driver = new Driver(left,right ,leftEnc ,rightEnc ,gyro);
+		shooter = new Shooter(RobotMap.MOTOR_SHOOTER, RobotMap.MOTOR_SCRAMBLE, shooterEnc);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
@@ -216,6 +230,29 @@ public class Robot extends IterativeRobot {
 			climber.climb(0);
 		}
 		
+		/*************************************** Dashboard Widgets *************************************/
+		
+		SmartDashboard.putNumber("Shooter Speed", shooter.GetSpeed());
+		SmartDashboard.putNumber("Shooter PWM", shooter.GetPwmScalar());
+		
+		
+		
+		/**************TEST SECTION - INCREASING AND DECREASING VELOCITY*****************************/
+		
+		if(delayCount>0){
+			delayCount--;
+		}
+		else
+			delayCount=0;
+		
+		if(joy.getRawButton(3) && delayCount==0){
+			shooter.increaseVelocity();
+			delayCount=30;
+		}
+		if(joy.getRawButton(4) && delayCount==0){
+			shooter.decreaseVelocity();
+			delayCount=30;
+		}		
 	}
 	
 	@Override

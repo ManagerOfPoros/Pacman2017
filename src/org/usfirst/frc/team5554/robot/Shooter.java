@@ -1,8 +1,6 @@
 package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.Controllers.Motor;
-
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Victor;
@@ -12,14 +10,17 @@ public class Shooter
 	private Motor firstShooter;
 	private Victor scramble;
 	private Encoder encoder;
+	private double velocity;
 
-	public Shooter(int shooterPort, int scramblePort , int leftEncPort0 , int leftEncPort1)
+	public Shooter(int shooterPort, int scramblePort , Encoder enc)
 	{
 		firstShooter = new Motor(shooterPort);
 		scramble = new Victor(scramblePort);
 		
-		encoder = new Encoder(leftEncPort0 , leftEncPort1 , true , EncodingType.k4X);
+		encoder = enc;
 		encoder.setDistancePerPulse(15.24 / 360);
+		
+		velocity = 20;        //in m/s 
 	}
 	
 	public void shoot(double speed)
@@ -44,15 +45,40 @@ public class Shooter
 	
 	public void autoShoot()
 	{
-		double velocity = 20;
+		
+		
+		// enter equation from excel - turns distance into velocity 
 		maintainSpeed(velocity);
 		
 		System.out.println("The speed is: " + encoder.getRate());
+		System.out.println("**velocity"+ velocity);
 	}
 	
 	public void disController()
 	{
 		firstShooter.disController();
+	}
+	
+	public double GetSpeed()
+	{
+		return encoder.getRate();
+	}
+	
+	public double GetPwmScalar()
+	{
+		return firstShooter.get();
+	}
+	
+	//***************For tests only*************************//
+	
+	public void decreaseVelocity()
+	{
+		velocity+=0.5;
+	}
+	
+	public void increaseVelocity()
+	{
+		velocity+=0.5;
 	}
 	
 }

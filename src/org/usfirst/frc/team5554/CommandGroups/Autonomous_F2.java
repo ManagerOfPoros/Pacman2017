@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_F2 extends CommandGroup {
 
     public Autonomous_F2(Driver driver) {
-    	addSequential(new DriveDistance(RobotMap.DISTANCE_TO_BASELINE_FROM_START + RobotMap.ROBOT_LENGTH, driver));
+    	addSequential(new DriveDistance(0.4, driver , 3));
     	addSequential(new AutoSpin(-RobotMap.DEGREES_TO_TURN_TO_AIRSHIP, driver));
-    	addSequential(new DriveDistance(RobotMap.DISTANCE_TO_AIRSHIP_FROM_BASELINE, driver));
+    	addSequential(new DriveDistance(0.4, driver , 2));
 
     }
 }

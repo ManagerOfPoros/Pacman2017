@@ -52,6 +52,11 @@ public class RobotMap {
     public final static int RELAY_PORT =  8;
     public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
+/*****************Encoder Values*********************************************************/
+    
+    public final static double DIAMETER_OF_6INCHWHEEL = 15.24;
+    public final static double ENCODER_ROUNDS_PER_REVOLUTION = 360;
+    
 /*******************Autonomous Measurement***********************************************/
     public final static int DISTANCE_TO_AIRSHIP_FROM_SIDE = 0; //TODO: Add a real measured value!
     public final static int DISTANCE_TO_BASELINE_FROM_START = 237;
