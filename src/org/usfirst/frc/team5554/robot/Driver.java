@@ -75,9 +75,9 @@ public class Driver extends RobotDrive
 		
 	}
 	
-	public void autonomousDrive(double speed)
+	public void autonomousDrive(double speed , double curve)
 	{
-		drive(speed, 0);
+		drive(speed, curve);
 	}
 	
 	
@@ -86,7 +86,6 @@ public class Driver extends RobotDrive
 		if(isEnabled)
 		{
 			gyro.reset();
-			System.out.println("reseeeeet");
 		
 			((Motor)this.m_rearLeftMotor).SetFeedbackDevice(gyro);
 			((Motor)this.m_rearRightMotor).SetFeedbackDevice(gyro);
@@ -149,6 +148,16 @@ public class Driver extends RobotDrive
 	public double GetError()
 	{
 		return ((Motor)this.m_rearRightMotor).GetError();
+	}
+	
+	public double GetAngle()
+	{
+		return gyro.getAngle();
+	}
+	
+	public void ResetGyro()
+	{
+		gyro.reset();
 	}
 
 }

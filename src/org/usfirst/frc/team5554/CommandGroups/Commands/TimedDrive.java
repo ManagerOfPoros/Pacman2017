@@ -24,11 +24,12 @@ public class TimedDrive extends Command
 	@Override
 	protected void execute()
 	{
-		driver.autonomousDrive(speed);
+		driver.autonomousDrive(speed , 0);
 	}
 
 	@Override
-	protected boolean isFinished() {
+	protected boolean isFinished()
+	{
 		
 		if(isTimedOut())
 		{
@@ -43,6 +44,6 @@ public class TimedDrive extends Command
 	@Override
 	protected void end()
 	{
-		driver.autonomousDrive(0);
+		driver.autonomousDrive(0 , 0);
 	}
 }
