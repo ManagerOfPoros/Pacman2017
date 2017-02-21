@@ -11,6 +11,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_B extends CommandGroup {
 
     public Autonomous_B(Driver driver) {
-    	addSequential(new DriveDistance(0.4, driver,2));
+    	addSequential(new AutoSpin(90, driver));
     }
 }

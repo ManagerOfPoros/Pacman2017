@@ -20,7 +20,7 @@ public class Shooter
 		encoder = enc;
 		encoder.setDistancePerPulse(15.24 / 360);
 		
-		velocity = 20;        //in m/s 
+		velocity = 0.6;        //in pwm
 	}
 	
 	public void shoot(double speed)
@@ -44,11 +44,11 @@ public class Shooter
 	}
 	
 	public void autoShoot()
-	{
-		
-		
+	{				
 		// enter equation from excel - turns distance into velocity 
-		maintainSpeed(velocity);
+		//maintainSpeed(velocity);
+		
+		firstShooter.set(velocity);
 		
 		System.out.println("The speed is: " + encoder.getRate());
 		System.out.println("**velocity"+ velocity);
@@ -61,24 +61,19 @@ public class Shooter
 	
 	public double GetSpeed()
 	{
-		return encoder.getRate();
-	}
-	
-	public double GetPwmScalar()
-	{
-		return firstShooter.get();
+		return velocity;
 	}
 	
 	//***************For tests only*************************//
 	
 	public void decreaseVelocity()
 	{
-		velocity+=0.5;
+		velocity-=0.01;
 	}
 	
 	public void increaseVelocity()
 	{
-		velocity+=0.5;
+		velocity+=0.01;
 	}
 	
 }

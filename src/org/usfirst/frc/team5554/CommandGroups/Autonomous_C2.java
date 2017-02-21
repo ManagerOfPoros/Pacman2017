@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_C2 extends CommandGroup {
 
     public Autonomous_C2(Driver driver) {
-    	addSequential(new DriveDistance(0.4, driver , 3));
+    	addSequential(new TimedDrive(0.4, driver , 3));
     	addSequential(new AutoSpin(RobotMap.DEGREES_TO_TURN_TO_AIRSHIP, driver));
-    	addSequential(new DriveDistance(0.3, driver , 4));
+    	addSequential(new TimedDrive(0.3, driver , 4));
     }
 }

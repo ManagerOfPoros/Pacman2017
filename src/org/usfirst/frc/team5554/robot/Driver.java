@@ -4,10 +4,9 @@ import org.usfirst.frc.team5554.Controllers.Motor;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 public class Driver extends RobotDrive
 {
@@ -30,7 +29,7 @@ public class Driver extends RobotDrive
 	{			
 		super(left , right);	
 		
-		setSafetyEnabled(true);
+		setSafetyEnabled(false);
 		
 		this.leftEncoder = leftEnc;
 		this.rightEncoder = rightEnc;
@@ -61,6 +60,7 @@ public class Driver extends RobotDrive
 			//Gives us freedom to manipulte the front of the robot.
 			//If +slider and -slider can change the front of the motor since
 			//they determine if the scalar is from 0-1 or from -1 to 0.
+			
 			if(isInvert == false)
 			{
 				setMaxOutput(slider);
@@ -71,8 +71,6 @@ public class Driver extends RobotDrive
 			}
 			
 			arcadeDrive(joy);
-			
-			Timer.delay(0.005);
 		}
 		
 	}
@@ -88,6 +86,7 @@ public class Driver extends RobotDrive
 		if(isEnabled)
 		{
 			gyro.reset();
+			System.out.println("reseeeeet");
 		
 			((Motor)this.m_rearLeftMotor).SetFeedbackDevice(gyro);
 			((Motor)this.m_rearRightMotor).SetFeedbackDevice(gyro);
@@ -95,8 +94,8 @@ public class Driver extends RobotDrive
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
 			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);		
 		
-			((Motor)this.m_rearRightMotor).SetPID(1, 0.001, 2);
-			((Motor)this.m_rearLeftMotor).SetPID(1, 0.001, 2);
+			((Motor)this.m_rearRightMotor).SetPID(0.008, 0.0001, 0.003);
+			((Motor)this.m_rearLeftMotor).SetPID(0.008, 0.0001, 0.003);
 		
 			((Motor)this.m_rearRightMotor).GoDistance(degrees , invertRight);
 			((Motor)this.m_rearLeftMotor).GoDistance(degrees , invertLeft);
@@ -139,6 +138,17 @@ public class Driver extends RobotDrive
 	public void disable()
 	{
 		this.isEnabled = false;
+	}
+	
+	public void disController()
+	{
+		((Motor)this.m_rearRightMotor).disController();
+		((Motor)this.m_rearLeftMotor).disController();
+	}
+	
+	public double GetError()
+	{
+		return ((Motor)this.m_rearRightMotor).GetError();
 	}
 
 }

@@ -74,6 +74,11 @@ public class GuideLines
 		return (objectwidth*FocalLength)/pixDistance;
 	}
 	
+	public int GetPixDis()
+	{
+		return Math.abs(this.glXLeft - this.glXRight);
+	}
+	
 	public int GetLeftX()
 	{
 		return glXLeft;

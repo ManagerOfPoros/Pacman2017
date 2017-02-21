@@ -23,13 +23,14 @@ public class AutoSpin extends Command
 	@Override
     protected void initialize() 
 	{
-    	driver.Spin(degrees , true, false);
+    	driver.Spin(degrees , false, false);
+    	System.out.println("initialized");
     }
 
 	@Override
 	protected boolean isFinished()
 	{
-		if(driver.LeftOnTarget(0.1) && driver.RightOnTarget(0.1))
+		if(driver.GetError() < 30)
 		{
 	    	System.out.printf("Spinned %d degrees", degrees);
 			return true;
@@ -38,6 +39,12 @@ public class AutoSpin extends Command
 		{
 			return false;
 		}
+	}
+	
+	@Override
+	protected void end()
+	{
+		driver.disController();		
 	}
 
 }

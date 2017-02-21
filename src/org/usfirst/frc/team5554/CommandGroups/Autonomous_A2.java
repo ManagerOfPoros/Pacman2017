@@ -8,6 +8,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_A2 extends CommandGroup {
 
     public Autonomous_A2(Driver driver) {
-       addSequential(new DriveDistance(0.4, driver , 2));
+       addSequential(new TimedDrive(0.4, driver , 2));
        }
 }

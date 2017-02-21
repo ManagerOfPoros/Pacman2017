@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import org.usfirst.frc.team5554.robot.Driver;
 
-public class DriveDistance extends Command
+public class TimedDrive extends Command
 {
 	private double speed;
 	private Driver driver;
 	
-	public DriveDistance(double speed, Driver driver, double timeout)
+	public TimedDrive(double speed, Driver driver, double timeout)
 	{
-		super("DriveDistance", timeout);
+		super("TimedDrive", timeout);
 		this.speed = speed;
 		this.driver = driver;
 	}
@@ -30,6 +30,19 @@ public class DriveDistance extends Command
 	@Override
 	protected boolean isFinished() {
 		
-		return false;
+		if(isTimedOut())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	@Override
+	protected void end()
+	{
+		driver.autonomousDrive(0);
 	}
 }

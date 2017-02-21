@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_C3 extends CommandGroup {
 
     public Autonomous_C3(Driver driver, Shooter shooter) {
-    	addSequential(new DriveDistance(0.4 , driver , 2));
+    	addSequential(new TimedDrive(0.4 , driver , 2));
     	addSequential(new AutoSpin(RobotMap.DEGREES_TO_TURN_FROM_SIDES_TO_SHOOT, driver));
     	addSequential(new AutoShoot(shooter));
     	

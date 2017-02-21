@@ -2,6 +2,7 @@ package org.usfirst.frc.team5554.cameras;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.CvSource;
@@ -25,6 +26,12 @@ public class VideoBox
 	{
 		Imgproc.line(mat, new Point(gl.GetLeftX(),gl.GetUpY()) , new Point(gl.GetLeftX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
 		Imgproc.line(mat, new Point(gl.GetRightX(),gl.GetUpY()) , new Point(gl.GetRightX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
+		return mat;
+	}
+	
+	public Mat DrawCircle(Mat mat , Point center , int radius , Scalar color , int thickness)
+	{
+		Imgproc.circle(mat, center, radius, color , thickness);
 		return mat;
 	}
 

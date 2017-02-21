@@ -13,9 +13,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class Autonomous_F1 extends CommandGroup {
 
     public Autonomous_F1(Driver driver, Shooter shooter) {
-    	addSequential(new DriveDistance(0.4, driver , 2));
+    	addSequential(new TimedDrive(0.4, driver , 2));
     	addSequential(new AutoSpin(-RobotMap.DEGREES_TO_TURN_TO_AIRSHIP, driver));
-    	addSequential(new DriveDistance(0.4, driver , 2));
+    	addSequential(new TimedDrive(0.4, driver , 2));
     	addSequential(new AutoSpin(180, driver));
     	addSequential(new AutoShoot(shooter));
     }

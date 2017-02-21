@@ -41,15 +41,14 @@ public class RobotMap {
     
 /*******************Sensors ports****************************************************************/
     
-    public final static int LEFT_ENCODER_CHANNELA = 0;
-    public final static int LEFT_ENCODER_CHANNELB = 1;
-    public final static int RIGHT_ENCODER_CHANNELA = 2;
-    public final static int RIGHT_ENCODER_CHANNELB = 3;
-    public final static int SHOOTER_ENCODER_CHANNELA = 4;
-    public final static int SHOOTER_ENCODER_CHANNELB = 5;
-    public final static int GEAR_MICROSWITCH_PORT_ONE =  6;
-    public final static int GEAR_MICROSWITCH_PORT_TWO =  7;
-    public final static int RELAY_PORT =  8;
+    public final static int LEFT_ENCODER_CHANNELA = 3;
+    public final static int LEFT_ENCODER_CHANNELB = 4;
+    public final static int RIGHT_ENCODER_CHANNELA = 5;
+    public final static int RIGHT_ENCODER_CHANNELB = 6;
+    public final static int SHOOTER_ENCODER_CHANNELA = 1;
+    public final static int SHOOTER_ENCODER_CHANNELB = 2;
+    public final static int GEAR_MICROSWITCH_PORT =  7;
+    public final static int RELAY_PORT =  0;
     public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
 /*****************Encoder Values*********************************************************/
@@ -71,11 +70,11 @@ public class RobotMap {
 /*******************Cameras Values***************************************************/
     
     public final static int NUMBER_OF_CAMERAS = 3;
-    public final static int FRONT_CAMERA_IDX = 2;
+    public final static int FRONT_CAMERA_IDX = 0;
     public final static int SYSTEMS_CAMERA_IDX = 1;
-    public final static int SHOOTER_CAMERA_IDX = 0;
+    public final static int SHOOTER_CAMERA_IDX = 2;
     public final static double FOCAL_LENGTH = 334.595;
-    public final static double BOILER_WIDTH = 58;
+    public final static double BOILER_WIDTH = 61;
 
 }
 

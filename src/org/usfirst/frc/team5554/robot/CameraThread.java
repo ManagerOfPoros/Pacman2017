@@ -39,17 +39,14 @@ public class CameraThread extends Thread
 		gls.put("Shooter", new GuideLines(100, 219, 0, 240, new Scalar(0,0,255), 2));
 		gls.get("Shooter").SetBoundries(2, 319);
 		gls.put("CenterPoint", new GuideLines(160 , 161 , 120 , 121 , new Scalar(255,0,0), 2));
-		gls.put("GearGuider1", new GuideLines(50 , 100 , 0 , 240 , new Scalar(255,0,0), 2));
-		gls.put("GearGuider2", new GuideLines(200 , 250 , 0 , 240 , new Scalar(255,0,0), 2));
-		gls.put("FeederLines", new GuideLines(75, 247, 0 , 240 , new Scalar(255,0,0) , 2));
+		gls.put("GearGuider1", new GuideLines(38 , 79 , 0 , 240 , new Scalar(255,0,0), 2));
+		gls.put("GearGuider2", new GuideLines(289 , 248 , 0 , 240 , new Scalar(255,0,0), 2));
 		
 		/*****************************Flags****************************************************/
 	
-		boolean showGearGuide = false;
-		boolean showFeedLines = false;
+		boolean showGearGuider = false;
 		boolean ignoreButton2 = false;
 		boolean ignoreButton3 = false;
-		boolean ignoreButton4 = false;
 		boolean isSystemsCamera = false;
 				
 		/******************************The Thread Main body***************************************/
@@ -99,41 +96,19 @@ public class CameraThread extends Thread
 				{
 					ignoreButton3 = true;
 				
-					if(showGearGuide == false)
+					if(showGearGuider == false)
 					{
-						showFeedLines = false;
-						showGearGuide = true;
+						showGearGuider = true;
 					}
 					else
 					{
-						showGearGuide = false;
+						showGearGuider = false;
 					}
 	    		
 				}
 				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_GEARGL))
 				{
 					ignoreButton3 = false;
-				}
-				
-				if(joy.getRawButton(RobotMap.JOYSTICK_SHOW_FEEDGL) && ignoreButton4 == false && liveCamera == RobotMap.FRONT_CAMERA_IDX)
-				{
-					ignoreButton4 = true;
-				
-					if(showFeedLines == false)
-					{
-						showGearGuide = false;
-						showFeedLines = true;
-						
-					}
-					else
-					{
-						showFeedLines = false;
-					}
-	    		
-				}
-				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_FEEDGL))
-				{
-					ignoreButton4 = false;
 				}
 				
 				/********************************Narrows And Dialates Shooter Gls********************************/
@@ -159,12 +134,7 @@ public class CameraThread extends Thread
 									screen.DrawGuideLines(cameras.GetStream(), gls.get("Shooter")), 
 										gls.get("CenterPoint")));
 				}
-				else if(showFeedLines  && !isSystemsCamera)
-				{
-					screen.stream(
-							screen.DrawGuideLines(cameras.GetStream(), gls.get("FeederLines")));
-				}
-				else if(showGearGuide  && !isSystemsCamera)
+				else if(showGearGuider  && !isSystemsCamera)
 				{
 					screen.stream(
 							screen.DrawGuideLines(
@@ -185,15 +155,17 @@ public class CameraThread extends Thread
 			
 			/***********************************Dashboard Widgets****************************************************/
 			
-			distance = gls.get("Shooter").GetDistance(RobotMap.FOCAL_LENGTH, RobotMap.BOILER_WIDTH);
+			distance = gls.get("Shooter").GetDistance(RobotMap.FOCAL_LENGTH, RobotMap.BOILER_WIDTH) -35;
 			
-			if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX)
+			if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && distance>0)
 			{
 				SmartDashboard.putNumber("Distance: ", CameraThread.distance);
+				SmartDashboard.putNumber("pixels: ", gls.get("Shooter").GetPixDis());
 			}
 			else
 			{
 				SmartDashboard.putNumber("Distance: ", 0);
+				SmartDashboard.putNumber("pixels: ", 0);
 			}
 			
 		}

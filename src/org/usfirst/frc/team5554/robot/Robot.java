@@ -2,7 +2,6 @@ package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
 import org.usfirst.frc.team5554.Controllers.Motor;
-
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
@@ -42,10 +41,11 @@ public class Robot extends IterativeRobot {
 	public static boolean isInShootingMode;
 	public static boolean isInAutonomousMode;
 	
-	
-	
 	int delayCount; // for tests only!!!!!!!!!!!!!!
 	
+	private Encoder leftEnc;
+	private Encoder rightEnc;
+	private Encoder shooterEnc;	
 	
 	@Override
 	public void robotInit() 
@@ -55,14 +55,15 @@ public class Robot extends IterativeRobot {
 		//Driving
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
-		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
 		leftEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		rightEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		ADXRS450_Gyro gyro = new ADXRS450_Gyro(RobotMap.GYRO_PORT);
-		
+		gyro.reset();
+				
 		//Shooter
-		Encoder shooterEnc = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA , RobotMap.SHOOTER_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		shooterEnc = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA , RobotMap.SHOOTER_ENCODER_CHANNELB , false , CounterBase.EncodingType.k4X);
 		shooterEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 				
 		/***********************************Declaring Operator Objects***********************************************/
@@ -72,7 +73,7 @@ public class Robot extends IterativeRobot {
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
-		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT_ONE, RobotMap.GEAR_MICROSWITCH_PORT_TWO,RobotMap.RELAY_PORT,2);		
+		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT,RobotMap.RELAY_PORT,2);		
 		gears.SetLeds(true);
 		
 		/**********************************Joysticks Declaration****************************************************/
@@ -90,7 +91,7 @@ public class Robot extends IterativeRobot {
 		//Red Alliance
 		redChooser = new SendableChooser<Command>();
 		redChooser.addDefault("Empty", new Autonomous_Empty());
-		redChooser.addObject("A1", new Autonomous_A1(driver));
+		redChooser.addObject("A1", new PassBaseLine(driver));
 		redChooser.addObject("A2", new Autonomous_A2(driver));
 		redChooser.addObject("B", new Autonomous_B(driver));
 		redChooser.addObject("C1", new Autonomous_C1(driver, shooter));
@@ -162,7 +163,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() 
 	{
 		/****************************************** Driving ********************************************/
-		
+
 		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS) , joy);
 	
 		/****************************************** Shooter&Scramble ********************************************/
@@ -174,7 +175,7 @@ public class Robot extends IterativeRobot {
 			Robot.isInShootingMode = true;
 			driver.disable();
 		}
-		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
+		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SHOOTER_BACKWARD))
 		{
 			shooter.shoot(-0.5);
 			Robot.isInShootingMode = false;
@@ -191,7 +192,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		//Scramble
-		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 || Robot.isInShootingMode)
+		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 )
 		{
 			shooter.scramble(0.8);
 		}
@@ -206,9 +207,9 @@ public class Robot extends IterativeRobot {
     	
 		/****************************************** Feeder *********************************************/
 		
-		if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_BUTTON) || Robot.isInShootingMode)
+		if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_BUTTON))
 		{
-			feeder.feed(0.8);
+			feeder.feed(1);
 		}
 		else
 		{
@@ -232,12 +233,9 @@ public class Robot extends IterativeRobot {
 		
 		/*************************************** Dashboard Widgets *************************************/
 		
-		SmartDashboard.putNumber("Shooter Speed", shooter.GetSpeed());
-		SmartDashboard.putNumber("Shooter PWM", shooter.GetPwmScalar());
+		SmartDashboard.putNumber("Shooter PWM", shooter.GetSpeed());				
 		
-		
-		
-		/**************TEST SECTION - INCREASING AND DECREASING VELOCITY*****************************/
+		//**************TEST SECTION - INCREASING AND DECREASING VELOCITY*****************************//
 		
 		if(delayCount>0){
 			delayCount--;
@@ -245,11 +243,11 @@ public class Robot extends IterativeRobot {
 		else
 			delayCount=0;
 		
-		if(joy.getRawButton(3) && delayCount==0){
+		if(joy.getRawButton(7) && delayCount==0){
 			shooter.increaseVelocity();
 			delayCount=30;
 		}
-		if(joy.getRawButton(4) && delayCount==0){
+		if(joy.getRawButton(8) && delayCount==0){
 			shooter.decreaseVelocity();
 			delayCount=30;
 		}		

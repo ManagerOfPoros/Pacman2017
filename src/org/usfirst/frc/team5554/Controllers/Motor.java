@@ -39,7 +39,6 @@ public class Motor extends Victor{
 	{
 		if(controller == null)
 		{
-			System.out.println("PID controller created");
 			controller = new PIDController(p, i, d,f, PidSource, this);
 		}
 		else
@@ -88,13 +87,13 @@ public class Motor extends Victor{
 	
 	public boolean onTarget(double tolerance)
 	{		
-		controller.setPercentTolerance(tolerance);
+		controller.setAbsoluteTolerance(tolerance);;
 		return controller.onTarget();		
 	}
 	
-	public int GetSomething()
+	public double GetError()
 	{
-		return this.getChannel();
+		return controller.getError();
 	}
 
 
