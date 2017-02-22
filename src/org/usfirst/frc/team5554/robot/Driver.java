@@ -155,9 +155,15 @@ public class Driver extends RobotDrive
 		return gyro.getAngle();
 	}
 	
+	public void CalibrateGyro()
+	{
+		gyro.calibrate();
+	}
+	
 	public void ResetGyro()
 	{
 		gyro.reset();
 	}
+
 
 }

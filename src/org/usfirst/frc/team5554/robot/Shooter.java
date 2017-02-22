@@ -8,13 +8,15 @@ import edu.wpi.first.wpilibj.Victor;
 public class Shooter 
 {
 	private Motor firstShooter;
+	private Motor secondShooter;
 	private Victor scramble;
 	private Encoder encoder;
 	private double velocity;
 
-	public Shooter(int shooterPort, int scramblePort , Encoder enc)
+	public Shooter(int shooterPort, int shooterPort2, int scramblePort , Encoder enc)
 	{
 		firstShooter = new Motor(shooterPort);
+		secondShooter = new Motor(shooterPort2);
 		scramble = new Victor(scramblePort);
 		
 		encoder = enc;
@@ -26,6 +28,7 @@ public class Shooter
 	public void shoot(double speed)
 	{
 		firstShooter.set(speed);
+		secondShooter.set(speed);
 	}
 	
 	public void maintainSpeed(double vel)              // gets velocity in m/s
@@ -49,9 +52,7 @@ public class Shooter
 		//maintainSpeed(velocity);
 		
 		firstShooter.set(velocity);
-		
-		System.out.println("The speed is: " + encoder.getRate());
-		System.out.println("**velocity"+ velocity);
+		secondShooter.set(velocity);		
 	}
 	
 	public void disController()

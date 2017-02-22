@@ -8,7 +8,7 @@ public class PassBaseLine extends CommandGroup
 {
 	public PassBaseLine(Driver driver)
 	{
-		addSequential(new TimedDrive(0.5, driver , 1.5));
+		addSequential(new TimedGyroDrive(0.5, driver , 2.5));
 		
 	}
 }

@@ -5,9 +5,10 @@ import org.usfirst.frc.team5554.robot.Driver;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class Autonomous_A2 extends CommandGroup {
+public class PlaceFrontGear extends CommandGroup {
 
-    public Autonomous_A2(Driver driver) {
-       addSequential(new TimedDrive(0.4, driver , 2));
+    public PlaceFrontGear(Driver driver) 
+    {
+       addSequential(new TimedGyroDrive(0.5, driver , 2.4));
        }
 }

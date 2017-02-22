@@ -31,10 +31,7 @@ public class Robot extends IterativeRobot {
 	/*****************************************Autonomous******************************************/
 	
 	private Command autonomousCommand;
-	private SendableChooser<Command> redChooser;	
-	private SendableChooser<Command> blueChooser;
-	private Command redSelected;
-	private Command blueSelected;
+	private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 	
 	/****************************************Flags************************************************/
 	
@@ -69,7 +66,7 @@ public class Robot extends IterativeRobot {
 		/***********************************Declaring Operator Objects***********************************************/
 		
 		driver = new Driver(left,right ,leftEnc ,rightEnc ,gyro);
-		shooter = new Shooter(RobotMap.MOTOR_SHOOTER, RobotMap.MOTOR_SCRAMBLE, shooterEnc);
+		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SHOOTER_TWO, RobotMap.MOTOR_SCRAMBLE, shooterEnc);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER);
@@ -88,29 +85,11 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		//Red Alliance
-		redChooser = new SendableChooser<Command>();
-		redChooser.addDefault("Empty", new Autonomous_Empty());
-		redChooser.addObject("A1", new PassBaseLine(driver));
-		redChooser.addObject("A2", new Autonomous_A2(driver));
-		redChooser.addObject("B", new Autonomous_B(driver));
-		redChooser.addObject("C1", new Autonomous_C1(driver, shooter));
-		redChooser.addObject("C2", new Autonomous_C2(driver));
-		redChooser.addObject("C3", new Autonomous_C3(driver, shooter));
-		redChooser.addObject("C4", new Autonomous_C4(driver));
-		SmartDashboard.putData("RedAutonomous" , redChooser);
-		
-		//Blue Alliance
-		blueChooser = new SendableChooser<Command>();
-		blueChooser.addDefault("Empty", new Autonomous_Empty());
-		blueChooser.addObject("D1", new Autonomous_D1(driver));
-		blueChooser.addObject("D2", new Autonomous_D2(driver));
-		blueChooser.addObject("E", new Autonomous_E(driver));
-		blueChooser.addObject("F1", new Autonomous_F1(driver, shooter));
-		blueChooser.addObject("F2", new Autonomous_F2(driver));
-		blueChooser.addObject("F3", new Autonomous_F3(driver, shooter));
-		blueChooser.addObject("F4", new Autonomous_F4(driver));
-		SmartDashboard.putData("BlueAutonomous" , blueChooser);
+		autoChooser.addDefault("Empty", new Empty());
+		autoChooser.addDefault("PassBseLine", new PassBaseLine(driver));
+		autoChooser.addDefault("PlaceFrontGear", new PlaceFrontGear(driver));
+		SmartDashboard.putData("Auto Selector" , autoChooser);
+
 		
 	}
 
@@ -122,28 +101,9 @@ public class Robot extends IterativeRobot {
 		//red chooser and the opposite.
 		//If both are selected empty then nothing will happen during the autonomous period.
 		//If both sides are picked then nothing will happen during the autonomous period.
-		
-		redSelected = redChooser.getSelected();
-		blueSelected = blueChooser.getSelected();
-		
-		if(blueSelected.toString().equals("Autonomous_Empty") && redSelected.toString().equals("Autonomous_Empty"))
-		{
-			autonomousCommand = new Autonomous_Empty();
-		}
-		else if(blueSelected.toString().equals("Autonomous_Empty"))
-		{
-			autonomousCommand = redSelected;
-		}
-		else if(redSelected.toString().equals("Autonomous_Empty"))
-		{
-			autonomousCommand = blueSelected;
-		}
-		else
-		{
-			autonomousCommand = new Autonomous_Empty();
-		}
-		
+		autonomousCommand = autoChooser.getSelected();
 		autonomousCommand.start();
+				
 	}
 
 	@Override
@@ -245,11 +205,11 @@ public class Robot extends IterativeRobot {
 		
 		if(joy.getRawButton(7) && delayCount==0){
 			shooter.increaseVelocity();
-			delayCount=30;
+			delayCount=10;
 		}
 		if(joy.getRawButton(8) && delayCount==0){
 			shooter.decreaseVelocity();
-			delayCount=30;
+			delayCount=10;
 		}		
 	}
 	
