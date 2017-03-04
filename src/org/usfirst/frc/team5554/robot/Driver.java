@@ -29,7 +29,7 @@ public class Driver extends RobotDrive
 	{			
 		super(left , right);	
 		
-		setSafetyEnabled(false);
+		setSafetyEnabled(true);
 		
 		this.leftEncoder = leftEnc;
 		this.rightEncoder = rightEnc;
@@ -47,8 +47,6 @@ public class Driver extends RobotDrive
 	 */
 	public void Moving(double slider, Joystick joy) 
 	{
-		m_rearLeftMotor.setInverted(false);
-		m_rearRightMotor.setInverted(false);
 		
 		joy.setAxisChannel(AxisType.kX, 2);
 		joy.setAxisChannel(AxisType.kZ, 0);

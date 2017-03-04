@@ -2,21 +2,20 @@ package org.usfirst.frc.team5554.robot;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.usfirst.frc.team5554.cameras.CameraHandler;
 import org.usfirst.frc.team5554.cameras.GuideLines;
 import org.usfirst.frc.team5554.cameras.VideoBox;
-
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CameraThread extends Thread
 {
 	private Joystick joy;
 	private Joystick xbox;
 	public static boolean toSwitch = false;
-	public static double distance = 0;
-	public static int liveCamera = RobotMap.FRONT_CAMERA_IDX;
+	public static double shootingPoint = 0;
 	
 	private Map<String,GuideLines> gls = new HashMap<String,GuideLines>();
 	
@@ -36,9 +35,9 @@ public class CameraThread extends Thread
 
 		/******************************Sets All Of The Guide Lines*********************************/
 
-		gls.put("Shooter", new GuideLines(100, 219, 0, 240, new Scalar(0,0,255), 2));
-		gls.get("Shooter").SetBoundries(2, 319);
-		gls.put("CenterPoint", new GuideLines(160 , 161 , 120 , 121 , new Scalar(255,0,0), 2));
+		gls.put("ShootingPoint0", new GuideLines(63, 232, 157, 240, new Scalar(0,0,255), 3));
+		gls.put("ShootingPoint0_Bound", new GuideLines(63, 232, 157, 157, new Scalar(0,0,255), 3));
+		gls.put("ShootingPoint1", new GuideLines(100, 219, 0, 240, new Scalar(0,0,255), 2));
 		gls.put("GearGuider1", new GuideLines(38 , 79 , 0 , 240 , new Scalar(255,0,0), 2));
 		gls.put("GearGuider2", new GuideLines(289 , 248 , 0 , 240 , new Scalar(255,0,0), 2));
 		
@@ -48,6 +47,7 @@ public class CameraThread extends Thread
 		boolean ignoreButton2 = false;
 		boolean ignoreButton3 = false;
 		boolean isSystemsCamera = false;
+		int liveCamera = RobotMap.FRONT_CAMERA_IDX;
 				
 		/******************************The Thread Main body***************************************/
 		while (!Thread.interrupted()) 
@@ -77,9 +77,9 @@ public class CameraThread extends Thread
 						ignoreButton2 = false;
 					}
 				}
+												
 				
-				
-				if(xbox.getRawButton(1))
+				if(xbox.getRawButton(RobotMap.XBOX_CLIMB_BUTTON))
 				{
 					cameras.SetStreamer(RobotMap.SYSTEMS_CAMERA_IDX); 
 					isSystemsCamera = true;
@@ -113,26 +113,23 @@ public class CameraThread extends Thread
 				
 				/********************************Narrows And Dialates Shooter Gls********************************/
 				
-				if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && !Robot.isInShootingMode)
-				{
-					if(xbox.getPOV() == 0)
-					{
-							gls.get("Shooter").NarrowWidth(1);
-					}
-					if(xbox.getPOV() == 180)
-					{
-							gls.get("Shooter").DialateWidth(1);
-					}
-				}
+//				if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && !Robot.isInShootingMode)
+//				{
+//					if(xbox.getPOV() == 0)
+//					{
+//							gls.get("Shooter").NarrowWidth(1);
+//					}
+//					if(xbox.getPOV() == 180)
+//					{
+//							gls.get("Shooter").DialateWidth(1);
+//					}
+//				}
 				
-				/********************************Chooses The GuideLines TO Show***********************************/
+				/*************************Chooses The GuideLines TO Show && Rotation***********************************/
 				
 				if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && !isSystemsCamera)
 				{
-					screen.stream(
-							screen.DrawGuideLines(
-									screen.DrawGuideLines(cameras.GetStream(), gls.get("Shooter")), 
-										gls.get("CenterPoint")));
+					screen.stream(screen.DrawLine(screen.DrawGuideLines(cameras.GetStream(),gls.get("ShootingPoint0")), new Point(63,157), new Point(232,157), new Scalar(0,0,255), 3));
 				}
 				else if(showGearGuider  && !isSystemsCamera)
 				{
@@ -140,6 +137,10 @@ public class CameraThread extends Thread
 							screen.DrawGuideLines(
 									screen.DrawGuideLines(cameras.GetStream(), gls.get("GearGuider1")), 
 										gls.get("GearGuider2")));
+				}
+				else if(isSystemsCamera)
+				{
+					screen.stream(screen.RotateFrame(cameras.GetStream() , 180));
 				}
 				else
 				{
@@ -154,19 +155,6 @@ public class CameraThread extends Thread
 			}
 			
 			/***********************************Dashboard Widgets****************************************************/
-			
-			distance = gls.get("Shooter").GetDistance(RobotMap.FOCAL_LENGTH, RobotMap.BOILER_WIDTH) -35;
-			
-			if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && distance>0)
-			{
-				SmartDashboard.putNumber("Distance: ", CameraThread.distance);
-				SmartDashboard.putNumber("pixels: ", gls.get("Shooter").GetPixDis());
-			}
-			else
-			{
-				SmartDashboard.putNumber("Distance: ", 0);
-				SmartDashboard.putNumber("pixels: ", 0);
-			}
 			
 		}
 	}

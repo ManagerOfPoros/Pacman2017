@@ -20,7 +20,6 @@ public class GearHolder {
 	
 	public void isGearIn()
 	{
-
 		if (MicroSwitch.get()) // micro is pressed and indicator false
 		{
 			indicator = true; // gear is in
@@ -54,7 +53,7 @@ public class GearHolder {
 	
 	public void SetLeds(boolean state)
 	{
-		LEDs.set(state);
+	//	LEDs.set(state);
 	}
 	
 	

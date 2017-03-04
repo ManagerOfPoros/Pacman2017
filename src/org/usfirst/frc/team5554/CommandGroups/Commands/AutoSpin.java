@@ -30,7 +30,7 @@ public class AutoSpin extends Command
 	@Override
 	protected boolean isFinished()
 	{
-		if(driver.GetError() < 30)
+		if(driver.GetError() < 1)
 		{
 	    	System.out.printf("Spinned %d degrees", degrees);
 			return true;

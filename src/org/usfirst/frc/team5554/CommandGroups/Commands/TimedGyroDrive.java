@@ -18,6 +18,7 @@ public class TimedGyroDrive extends Command {
     	super("TimedGyroDrive" , timeout);
         this.speed = speed;
         this.driver = driver;
+        this.driver.CalibrateGyro();
         this.driver.ResetGyro();
     }
 

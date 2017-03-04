@@ -38,11 +38,9 @@ public class Robot extends IterativeRobot {
 	public static boolean isInShootingMode;
 	public static boolean isInAutonomousMode;
 	
-	int delayCount; // for tests only!!!!!!!!!!!!!!
+	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
 	
-	private Encoder leftEnc;
-	private Encoder rightEnc;
-	private Encoder shooterEnc;	
 	
 	@Override
 	public void robotInit() 
@@ -52,24 +50,20 @@ public class Robot extends IterativeRobot {
 		//Driving
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
-		leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
+		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
 		leftEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		rightEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		ADXRS450_Gyro gyro = new ADXRS450_Gyro(RobotMap.GYRO_PORT);
 		gyro.reset();
 				
-		//Shooter
-		shooterEnc = new Encoder(RobotMap.SHOOTER_ENCODER_CHANNELA , RobotMap.SHOOTER_ENCODER_CHANNELB , false , CounterBase.EncodingType.k4X);
-		shooterEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
-				
 		/***********************************Declaring Operator Objects***********************************************/
 		
 		driver = new Driver(left,right ,leftEnc ,rightEnc ,gyro);
-		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SHOOTER_TWO, RobotMap.MOTOR_SCRAMBLE, shooterEnc);
+		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ZERO, RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SCRAMBLE);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
-		climber = new Climb(RobotMap.MOTOR_CLIMBER);
+		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
 		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT,RobotMap.RELAY_PORT,2);		
 		gears.SetLeds(true);
 		
@@ -85,9 +79,9 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
+		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
 		autoChooser.addDefault("Empty", new Empty());
-		autoChooser.addDefault("PassBseLine", new PassBaseLine(driver));
-		autoChooser.addDefault("PlaceFrontGear", new PlaceFrontGear(driver));
+		autoChooser.addObject("PlaceFrontGear", new PlaceFrontGear(driver));
 		SmartDashboard.putData("Auto Selector" , autoChooser);
 
 		
@@ -96,11 +90,12 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() 
 	{		
-		//This section determines that if the blue autonomous selected
-		//is empty then the autonoumous command selected will be from the 
-		//red chooser and the opposite.
-		//If both are selected empty then nothing will happen during the autonomous period.
-		//If both sides are picked then nothing will happen during the autonomous period.
+		/**This section determines that if the blue autonomous selected
+		 *is empty then the autonoumous command selected will be from the 
+		 *red chooser and the opposite.
+		 *If both are selected empty then nothing will happen during the autonomous period.
+		 *If both sides are picked then nothing will happen during the autonomous period.
+		**/
 		autonomousCommand = autoChooser.getSelected();
 		autonomousCommand.start();
 				
@@ -137,24 +132,21 @@ public class Robot extends IterativeRobot {
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SHOOTER_BACKWARD))
 		{
-			shooter.shoot(-0.5);
+			shooter.shoot(0.5);
 			Robot.isInShootingMode = false;
-			shooter.disController();
 			driver.enable();
 		}
 		else
 		{
 			shooter.shoot(0);
 			Robot.isInShootingMode = false;
-			shooter.disController();
 			driver.enable();
 		}
-		
 		
 		//Scramble
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 )
 		{
-			shooter.scramble(0.8);
+			shooter.scramble(1);
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
 		{
@@ -169,7 +161,11 @@ public class Robot extends IterativeRobot {
 		
 		if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_BUTTON))
 		{
-			feeder.feed(1);
+			feeder.feed(-0.8);
+		}
+		else if(joy.getRawButton(RobotMap.JOYSTICK_FEEDER_REVERSE_BUTTON))
+		{
+			feeder.feed(0.8);
 		}
 		else
 		{
@@ -193,24 +189,51 @@ public class Robot extends IterativeRobot {
 		
 		/*************************************** Dashboard Widgets *************************************/
 		
-		SmartDashboard.putNumber("Shooter PWM", shooter.GetSpeed());				
-		
+		SmartDashboard.putNumber("Shooter PWM", shooter.GetSpeed());	
+		SmartDashboard.putNumber("P of shooter:", shooter.getP());
+		SmartDashboard.putNumber("I of shooter:", shooter.getI());
+		SmartDashboard.putNumber("D of shooter:", shooter.getD());
 		//**************TEST SECTION - INCREASING AND DECREASING VELOCITY*****************************//
 		
-		if(delayCount>0){
-			delayCount--;
+    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
+    	{
+			ignoreIncreaseSwitch = true;
+			
+    		if(shooter.GetSpeed() <= 1)
+    		{
+    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
+    		}
+    	}
+    	else if(!joy.getRawButton(8))
+    	{
+    		ignoreIncreaseSwitch = false;
+    	}
+    	
+		//decrease speed button
+    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
+    	{
+    		ignoreDecreaseSwitch = true;
+    		
+    		if(shooter.GetSpeed() >= 0)
+    		{
+    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
+    		}
+
+    	}
+    	else if(!joy.getRawButton(7))
+    	{
+    		ignoreDecreaseSwitch = false;
+    	}
+    	
+		if(joy.getRawButton(9))
+		{
+			shooter.tweakPID(0.01);
+		}else if(joy.getRawButton(10)){
+			shooter.tweakPID(-0.01);
 		}
-		else
-			delayCount=0;
-		
-		if(joy.getRawButton(7) && delayCount==0){
-			shooter.increaseVelocity();
-			delayCount=10;
-		}
-		if(joy.getRawButton(8) && delayCount==0){
-			shooter.decreaseVelocity();
-			delayCount=10;
-		}		
+    	
+    	//System.out.println("Speed is " + shooter.GetSpeed());
+    	//shooter.setP((-joy.getRawAxis(3))/2 + 0.5);
 	}
 	
 	@Override
