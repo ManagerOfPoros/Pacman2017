@@ -148,6 +148,11 @@ public class Driver extends RobotDrive
 		return ((Motor)this.m_rearRightMotor).GetError();
 	}
 	
+	public boolean OnTarget(double tolerance)
+	{
+		return ((Motor)this.m_rearRightMotor).onTarget(tolerance);
+	}
+	
 	public double GetAngle()
 	{
 		return gyro.getAngle();

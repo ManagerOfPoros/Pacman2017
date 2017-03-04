@@ -63,9 +63,9 @@ public class RobotMap {
     public final static double PID_SPEED = 0.62;
     
 /*******************Autonomous Measurement***********************************************/
-    public final static int DISTANCE_TO_AIRSHIP_FROM_SIDE = 0; //TODO: Add a real measured value!
+    public final static double DISTANCE_TO_AIRSHIP_FROM_SIDE = 281.35;
     public final static int DISTANCE_TO_BASELINE_FROM_START = 237;
-    public final static int DISTANCE_TO_AIRSHIP_FROM_BASELINE = 0; //TODO: Add a real measured value!
+    public final static int DISTANCE_TO_AIRSHIP_FROM_BASELINE = 44;
     public final static int DISTANCE_TO_HOPPER_FROM_BASELINE = 0; //TODO: Add a real measured value!
     public final static int ROBOT_WIDTH = 101;
     public final static int ROBOT_LENGTH = 91;

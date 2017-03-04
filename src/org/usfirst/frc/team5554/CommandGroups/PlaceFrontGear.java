@@ -9,6 +9,6 @@ public class PlaceFrontGear extends CommandGroup {
 
     public PlaceFrontGear(Driver driver) 
     {
-       addSequential(new TimedGyroDrive(0.5, driver , 0.85));
+       addSequential(new TimedGyroDrive(0.5, driver , 0.95));
        }
 }

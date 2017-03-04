@@ -79,8 +79,9 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
 		autoChooser.addDefault("Empty", new Empty());
+		autoChooser.addObject("Empty", new Empty());
+		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
 		autoChooser.addObject("PlaceFrontGear", new PlaceFrontGear(driver));
 		SmartDashboard.putData("Auto Selector" , autoChooser);
 
