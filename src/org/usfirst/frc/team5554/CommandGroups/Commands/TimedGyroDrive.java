@@ -11,33 +11,31 @@ public class TimedGyroDrive extends Command {
 	
 	private double speed;
 	private Driver driver;
-	private final double kP = 0.01;
+	private double kP = 0.02;
 
     public TimedGyroDrive(double speed, Driver driver, double timeout) 
     {
     	super("TimedGyroDrive" , timeout);
         this.speed = speed;
         this.driver = driver;
-        this.driver.CalibrateGyro();
-        this.driver.ResetGyro();
     }
 
     @Override
     protected void initialize() 
     {
+        this.driver.ResetGyro();
     }
 
     @Override
     protected void execute() 
     {
-    	double angle = driver.GetAngle();
     	if(speed>0)
     	{
-    		driver.autonomousDrive(this.speed, -angle*kP);
+    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP);
     	}
     	else
     	{
-    		driver.autonomousDrive(this.speed, +angle*kP);
+    		driver.autonomousDrive(this.speed, +driver.GetAngle()*kP);
     	}
     }
 

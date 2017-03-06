@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 public class Driver extends RobotDrive
 {
@@ -27,14 +26,15 @@ public class Driver extends RobotDrive
 	 */
 	public Driver(Motor left, Motor right , Encoder leftEnc, Encoder rightEnc, ADXRS450_Gyro gyro) 
 	{			
-		super(left , right);	
+		super(left , right);
 		
-		setSafetyEnabled(true);
+		setSafetyEnabled(false);
 		
 		this.leftEncoder = leftEnc;
 		this.rightEncoder = rightEnc;
 		
 		this.gyro = gyro;		
+		gyro.reset();
 	}
 	
 	/**
@@ -47,9 +47,6 @@ public class Driver extends RobotDrive
 	 */
 	public void Moving(double slider, Joystick joy) 
 	{
-		
-		joy.setAxisChannel(AxisType.kX, 2);
-		joy.setAxisChannel(AxisType.kZ, 0);
 		
 		if(isEnabled)
 		{
@@ -68,13 +65,15 @@ public class Driver extends RobotDrive
 				setMaxOutput(-slider);
 			}
 			
-			arcadeDrive(joy);
+			setSafetyEnabled(false);
+			arcadeDrive(joy.getY() , joy.getZ());
 		}
 		
 	}
 	
 	public void autonomousDrive(double speed , double curve)
 	{
+		setSafetyEnabled(false);
 		drive(speed, curve);
 	}
 	
@@ -135,6 +134,9 @@ public class Driver extends RobotDrive
 	public void disable()
 	{
 		this.isEnabled = false;
+		this.m_rearLeftMotor.set(0);
+		this.m_rearRightMotor.set(0);
+		
 	}
 	
 	public void disController()

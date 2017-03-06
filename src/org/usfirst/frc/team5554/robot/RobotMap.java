@@ -21,6 +21,7 @@ public class RobotMap {
     public final static int DRIVER_XBOXJOYSTICK_PORT = 1;
     
 /****************************IO for Joysticks*******************************************************/    
+  
     //Joystick Controller
     public final static int JOYSTICK_Y_AXIS = 1; // Forward and backward joystick axis
     public final static int JOYSTICK_Z_AXIS = 2; // Spinning joystick controller axis
@@ -30,7 +31,7 @@ public class RobotMap {
     public final static int JOYSTICK_FEEDER_REVERSE_BUTTON = 6; // Joystick Button for realising stuck balls
     public final static int JOYSTICK_CAM_SWITCH = 2; // Thumb button
     public final static int JOYSTICK_SHOW_GEARGL = 3;
-    public final static int JOYSTICK_SHOW_FEEDGL = 4;
+    public final static int JOYSTICK_SHOW_SYSCAM = 4;
     
     //XBOX Controller
     public final static int XBOX_JOYSTICK_SYS_CAMERA = 1;
@@ -40,6 +41,7 @@ public class RobotMap {
     public final static int XBOX_JOYSTICK_SCRAMBLE_BACKWARD = 5; // LB Button
     public final static int XBOX_JOYSTICK_SHOOTER_DASHBOARD_GUIDELINES = 1; // A Button
     public final static int XBOX_CLIMB_BUTTON = 4; // Start Button
+    public final static int XBOX_REVERSE_CLIMB_BUTTON = 7;
     
 /*******************Sensors ports****************************************************************/
     
@@ -50,19 +52,20 @@ public class RobotMap {
     public final static int SHOOTER_ENCODER_CHANNELA = 1;
     public final static int SHOOTER_ENCODER_CHANNELB = 2;
     public final static int GEAR_MICROSWITCH_PORT =  0;
-    public final static int RELAY_PORT =  9;
+    public final static int LEDS_PORT =  9;
     public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
 /*****************Encoder Values*********************************************************/
     
     public final static double DIAMETER_OF_6INCHWHEEL = 15.24;
     public final static double ENCODER_ROUNDS_PER_REVOLUTION = 360;
-    public final static double PID_VALUE_P = 0.0746;
-    public final static double PID_VALUE_I = 0.0;
-    public final static double PID_VALUE_D = 0.014;
-    public final static double PID_SPEED = 0.62;
+    public final static double PID_VALUE_P = 0.0746; //0.0746
+    public final static double PID_VALUE_I = 0;	//0.00
+    public final static double PID_VALUE_D = 0.015; //0.015
+    public final static double PID_SPEED = 0.66;    //0.62
     
 /*******************Autonomous Measurement***********************************************/
+   
     public final static double DISTANCE_TO_AIRSHIP_FROM_SIDE = 281.35;
     public final static int DISTANCE_TO_BASELINE_FROM_START = 237;
     public final static int DISTANCE_TO_AIRSHIP_FROM_BASELINE = 44;

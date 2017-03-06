@@ -2,8 +2,6 @@ package org.usfirst.frc.team5554.robot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.usfirst.frc.team5554.cameras.CameraHandler;
 import org.usfirst.frc.team5554.cameras.GuideLines;
@@ -13,7 +11,6 @@ import edu.wpi.first.wpilibj.Joystick;
 public class CameraThread extends Thread
 {
 	private Joystick joy;
-	private Joystick xbox;
 	public static boolean toSwitch = false;
 	public static double shootingPoint = 0;
 	
@@ -22,7 +19,6 @@ public class CameraThread extends Thread
 	public CameraThread(Joystick operator, Joystick assistant)
 	{
 		joy = operator;
-		xbox = assistant;
 	}
 	
 	@Override	
@@ -46,6 +42,7 @@ public class CameraThread extends Thread
 		boolean showGearGuider = false;
 		boolean ignoreButton2 = false;
 		boolean ignoreButton3 = false;
+		boolean ignoreButton4 = false;
 		boolean isSystemsCamera = false;
 		int liveCamera = RobotMap.FRONT_CAMERA_IDX;
 				
@@ -55,6 +52,26 @@ public class CameraThread extends Thread
 			if(toSwitch)
 			{
 				/***********************Chooses Which Camera To Stream********************************/
+				
+				if(joy.getRawButton(RobotMap.JOYSTICK_SHOW_SYSCAM) && ignoreButton4== false && !Robot.isInShootingMode)
+				{
+					ignoreButton4 = true;
+				
+					if(isSystemsCamera)
+					{
+						isSystemsCamera = false;
+					}
+					else
+					{
+						isSystemsCamera = true;
+					}
+	    		
+				}
+				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_SYSCAM))
+				{
+					ignoreButton4 = false;
+				}
+				
 				if(!isSystemsCamera)
 				{
 					if(joy.getRawButton(RobotMap.JOYSTICK_CAM_SWITCH) && ignoreButton2== false && !Robot.isInShootingMode)
@@ -76,18 +93,12 @@ public class CameraThread extends Thread
 					{
 						ignoreButton2 = false;
 					}
-				}
-												
-				
-				if(xbox.getRawButton(RobotMap.XBOX_CLIMB_BUTTON))
-				{
-					cameras.SetStreamer(RobotMap.SYSTEMS_CAMERA_IDX); 
-					isSystemsCamera = true;
+					
+					cameras.SetStreamer(liveCamera);
 				}
 				else
 				{
-					cameras.SetStreamer(liveCamera);
-					isSystemsCamera = false;
+					cameras.SetStreamer(RobotMap.SYSTEMS_CAMERA_IDX);
 				}
 				
 				/********************************Chooses The GuideLines TO Show***********************************/	
@@ -129,7 +140,9 @@ public class CameraThread extends Thread
 				
 				if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && !isSystemsCamera)
 				{
-					screen.stream(screen.DrawLine(screen.DrawGuideLines(cameras.GetStream(),gls.get("ShootingPoint0")), new Point(63,157), new Point(232,157), new Scalar(0,0,255), 3));
+					screen.stream(screen.DrawLine(
+							screen.DrawGuideLines(cameras.GetStream(), gls.get("ShootingPoint0")) ,
+								gls.get("ShootingPoint0_Bound")));
 				}
 				else if(showGearGuider  && !isSystemsCamera)
 				{
@@ -153,9 +166,7 @@ public class CameraThread extends Thread
 				cameras.SetStreamer(RobotMap.FRONT_CAMERA_IDX);
 				screen.stream(cameras.GetStream());
 			}
-			
-			/***********************************Dashboard Widgets****************************************************/
-			
+						
 		}
 	}
 	

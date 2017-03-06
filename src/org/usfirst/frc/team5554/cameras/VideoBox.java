@@ -25,14 +25,14 @@ public class VideoBox
 	
 	public Mat DrawGuideLines(Mat mat , GuideLines gl)
 	{
-		Imgproc.line(mat, new Point(gl.GetLeftX(),gl.GetUpY()) , new Point(gl.GetLeftX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
-		Imgproc.line(mat, new Point(gl.GetRightX(),gl.GetUpY()) , new Point(gl.GetRightX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
+		Imgproc.line(mat, new Point(gl.GetLeftX(),gl.GetLeftY()) , new Point(gl.GetLeftX(),gl.GetRightY()),gl.GetColor(),gl.GetThickness());
+		Imgproc.line(mat, new Point(gl.GetRightX(),gl.GetLeftY()) , new Point(gl.GetRightX(),gl.GetRightY()),gl.GetColor(),gl.GetThickness());
 		return mat;
 	}
 	
-	public Mat DrawLine(Mat mat , Point upperPoint , Point lowerPoint , Scalar color, int thickness)
+	public Mat DrawLine(Mat mat , GuideLines gl)
 	{
-		Imgproc.line(mat , upperPoint , lowerPoint , color, thickness);
+		Imgproc.line(mat , new Point(gl.GetLeftX() , gl.GetLeftY()) , new Point(gl.GetRightX() , gl.GetRightY()) , gl.GetColor() ,  gl.GetThickness());
 		return mat;
 	}
 	
@@ -45,8 +45,7 @@ public class VideoBox
 	public Mat RotateFrame(Mat src , double angle)
 	{
 		Point pt = new Point(src.cols()/2 , src.rows()/2);
-		Mat r = Imgproc.getRotationMatrix2D(pt, angle, 1.0);
-		Imgproc.warpAffine(src, src, r, new Size(src.cols(),src.rows()));
+		Imgproc.warpAffine(src, src, Imgproc.getRotationMatrix2D(pt, angle, 1.0), new Size(src.cols(),src.rows()));
 		return src;
 	}
 

@@ -35,7 +35,7 @@ public class Shooter
 		shooter1.setD(RobotMap.PID_VALUE_D);
 		
 		shooter0.enable();
-		//shooter1.enableControl();
+		shooter1.enableControl();
 	}
 	
 	public void shoot(double speed)
@@ -55,18 +55,16 @@ public class Shooter
 		scramble.set(speed);
 	}
 	
-	public void autoShoot()
+	public void PidShoot(double speed)
 	{					
 		
 		final int RPM = 1500; //was 200
         /* Speed mode */
-        double targetSpeed = velocity * RPM; /* 1500 RPM in either direction */
+        double targetSpeed = speed * RPM; /* 1500 RPM in either direction */
         shooter0.changeControlMode(TalonControlMode.Follower);
         shooter1.changeControlMode(TalonControlMode.Speed); 
         shooter1.set(-targetSpeed);
         shooter0.set(shooter1.getDeviceID());
-        System.out.println("speed " + shooter1.getEncVelocity());
-        System.out.println("P is: " + shooter1.getP());
 
 	}
 	

@@ -6,8 +6,8 @@ public class GuideLines
 {
 	private int glXLeft;
 	private int glXRight;
-	private int glYUp;
-	private int glYDown;
+	private int glYLeft;
+	private int glYRight;
 	private Scalar glColor;
 	private int glThickness;
 	
@@ -20,8 +20,8 @@ public class GuideLines
 	{
 		glXLeft = xLeft;
 		glXRight = xRight;
-		glYUp = yUp;
-		glYDown = yDown;
+		glYLeft = yUp;
+		glYRight = yDown;
 		glColor = color;
 		glThickness = thickness;
 	}
@@ -89,14 +89,14 @@ public class GuideLines
 		return glXRight;
 	}
 	
-	public int GetUpY()
+	public int GetLeftY()
 	{
-		return glYUp;
+		return glYLeft;
 	}
 	
-	public int GetDownY()
+	public int GetRightY()
 	{
-		return glYDown;
+		return glYRight;
 	}
 	
 	public int GetThickness()

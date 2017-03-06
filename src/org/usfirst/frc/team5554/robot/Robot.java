@@ -1,12 +1,15 @@
 package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
+import org.usfirst.frc.team5554.Controllers.Indicator;
 import org.usfirst.frc.team5554.Controllers.Motor;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,7 +22,7 @@ public class Robot extends IterativeRobot {
 	private Driver driver;
 	private Shooter shooter;
 	private Feeder feeder;
-	private GearHolder gears;
+	private Indicator gears;
 	private Climb climber;
 	private CameraThread streamer;
 	
@@ -48,6 +51,8 @@ public class Robot extends IterativeRobot {
 		/****************************************Controllers********************************************/
 		
 		//Driving
+		Victor LEDs = new Victor(RobotMap.LEDS_PORT);
+		DigitalInput microSwitch = new DigitalInput(RobotMap.GEAR_MICROSWITCH_PORT);
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
 		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
@@ -64,8 +69,8 @@ public class Robot extends IterativeRobot {
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
-		gears = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT,RobotMap.RELAY_PORT,2);		
-		gears.SetLeds(true);
+		gears = new Indicator(microSwitch);		
+		gears.SetOutpotDevice(LEDs);;
 		
 		/**********************************Joysticks Declaration****************************************************/
 		
@@ -79,10 +84,10 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		autoChooser.addDefault("Empty", new Empty());
-		autoChooser.addObject("Empty", new Empty());
+		autoChooser.addDefault("Empty", null);
 		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
 		autoChooser.addObject("PlaceFrontGear", new PlaceFrontGear(driver));
+		autoChooser.addObject("AutoShoot", new ShootAuto(shooter));
 		SmartDashboard.putData("Auto Selector" , autoChooser);
 
 		
@@ -127,7 +132,7 @@ public class Robot extends IterativeRobot {
 		//Shooter
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
 		{
-			shooter.autoShoot();
+			shooter.PidShoot(RobotMap.PID_SPEED);
 			Robot.isInShootingMode = true;
 			driver.disable();
 		}
@@ -147,7 +152,7 @@ public class Robot extends IterativeRobot {
 		//Scramble
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 )
 		{
-			shooter.scramble(1);
+			shooter.scramble(0.8);
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
 		{
@@ -175,13 +180,17 @@ public class Robot extends IterativeRobot {
     	
     	/**************************************** Gear Holder ******************************************/
 	
-		gears.isGearIn();
+		gears.SendOutput(0.3, 4);;
 		
 		/****************************************** Climbing *******************************************/
 		
 		if(xbox.getRawButton(RobotMap.XBOX_CLIMB_BUTTON))
 		{
 			climber.climb(1);
+		}
+		else if(xbox.getRawButton(RobotMap.XBOX_REVERSE_CLIMB_BUTTON))
+		{
+			climber.climb(-1);
 		}
 		else
 		{
@@ -247,6 +256,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() 
 	{
+		driver.ResetGyro();
 	}
 	
 }
