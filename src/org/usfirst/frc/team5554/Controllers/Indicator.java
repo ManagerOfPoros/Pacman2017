@@ -7,13 +7,13 @@ public class Indicator {
 
 	private boolean indicator = false;
 	private boolean startCounting = false;
-	private SensorBase indicatorDevice;
+	private DigitalInput indicatorDevice;
 	private SpeedController output;
 	private int timer = 0;
 	
 	public Indicator(SensorBase indicatorDevice)
 	{
-		this.indicatorDevice = indicatorDevice;
+		this.indicatorDevice =((DigitalInput)indicatorDevice);
 		System.out.println("created object getting state : " + ((DigitalInput)indicatorDevice).get());
 	}
 	
@@ -24,7 +24,6 @@ public class Indicator {
 	
 	public void SendOutput(double outputValue,  int indicatorTime)
 	{
-		System.out.println("mc is: " + ((DigitalInput)indicatorDevice).get());
 		if (((DigitalInput)indicatorDevice).get()) // micro is pressed and indicator false
 		{
 			indicator = true; // gear is in

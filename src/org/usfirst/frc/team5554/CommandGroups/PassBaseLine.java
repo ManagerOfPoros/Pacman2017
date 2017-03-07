@@ -8,6 +8,7 @@ public class PassBaseLine extends CommandGroup
 {
 	public PassBaseLine(Driver driver)
 	{
+		driver.ResetGyro();
 		addSequential(new TimedGyroDrive(0.3, driver , 2.5));
 		
 	}

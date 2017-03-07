@@ -23,6 +23,7 @@ public class TimedGyroDrive extends Command {
     @Override
     protected void initialize() 
     {
+		driver.autonomousDrive(0 , 0 ,false);
         this.driver.ResetGyro();
     }
 
@@ -31,11 +32,11 @@ public class TimedGyroDrive extends Command {
     {
     	if(speed>0)
     	{
-    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP);
+    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP , false);
     	}
     	else
     	{
-    		driver.autonomousDrive(this.speed, +driver.GetAngle()*kP);
+    		driver.autonomousDrive(this.speed, +driver.GetAngle()*kP , false);
     	}
     }
 
@@ -55,7 +56,7 @@ public class TimedGyroDrive extends Command {
     @Override
     protected void end() 
     {
-		driver.autonomousDrive(0 , 0);
+		driver.autonomousDrive(0 , 0 ,false);
     }
 
 }

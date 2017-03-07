@@ -9,6 +9,7 @@ public class PlaceFrontGear extends CommandGroup {
 
     public PlaceFrontGear(Driver driver) 
     {
-       addSequential(new TimedGyroDrive(0.3, driver , 2.75));
-       }
+		driver.ResetGyro();
+		addSequential(new TimedGyroDrive(0.3, driver , 2.3));
+    }
 }

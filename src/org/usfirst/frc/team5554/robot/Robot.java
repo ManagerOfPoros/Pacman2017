@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -41,8 +41,8 @@ public class Robot extends IterativeRobot {
 	public static boolean isInShootingMode;
 	public static boolean isInAutonomousMode;
 	
-	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
-	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+//	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+//	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
 	
 	
 	@Override
@@ -51,7 +51,7 @@ public class Robot extends IterativeRobot {
 		/****************************************Controllers********************************************/
 		
 		//Driving
-		Victor LEDs = new Victor(RobotMap.LEDS_PORT);
+		Spark LEDs = new Spark(RobotMap.LEDS_PORT);
 		DigitalInput microSwitch = new DigitalInput(RobotMap.GEAR_MICROSWITCH_PORT);
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
 		gears = new Indicator(microSwitch);		
-		gears.SetOutpotDevice(LEDs);;
+		gears.SetOutpotDevice(LEDs);
 		
 		/**********************************Joysticks Declaration****************************************************/
 		
@@ -84,13 +84,18 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		autoChooser.addDefault("Empty", null);
+		autoChooser.addDefault("Empty", new Empty());
 		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
 		autoChooser.addObject("PlaceFrontGear", new PlaceFrontGear(driver));
 		autoChooser.addObject("AutoShoot", new ShootAuto(shooter));
 		SmartDashboard.putData("Auto Selector" , autoChooser);
 
 		
+	}
+	
+	@Override
+	public void robotPeriodic()
+	{
 	}
 
 	@Override
@@ -110,6 +115,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() 
 	{
+		gears.SetOutputDeviceState(0.3);
 		Scheduler.getInstance().run();
 		isInAutonomousMode = isAutonomous();
 	}
@@ -180,7 +186,7 @@ public class Robot extends IterativeRobot {
     	
     	/**************************************** Gear Holder ******************************************/
 	
-		gears.SendOutput(0.3, 4);;
+		gears.SetOutputDeviceState(0.3);
 		
 		/****************************************** Climbing *******************************************/
 		
@@ -197,53 +203,36 @@ public class Robot extends IterativeRobot {
 			climber.climb(0);
 		}
 		
-		/*************************************** Dashboard Widgets *************************************/
-		
-		SmartDashboard.putNumber("Shooter PWM", shooter.GetSpeed());	
-		SmartDashboard.putNumber("P of shooter:", shooter.getP());
-		SmartDashboard.putNumber("I of shooter:", shooter.getI());
-		SmartDashboard.putNumber("D of shooter:", shooter.getD());
-		//**************TEST SECTION - INCREASING AND DECREASING VELOCITY*****************************//
-		
-    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
-    	{
-			ignoreIncreaseSwitch = true;
-			
-    		if(shooter.GetSpeed() <= 1)
-    		{
-    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
-    		}
-    	}
-    	else if(!joy.getRawButton(8))
-    	{
-    		ignoreIncreaseSwitch = false;
-    	}
-    	
-		//decrease speed button
-    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
-    	{
-    		ignoreDecreaseSwitch = true;
-    		
-    		if(shooter.GetSpeed() >= 0)
-    		{
-    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
-    		}
+//    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
+//    	{
+//			ignoreIncreaseSwitch = true;
+//			
+//    		if(shooter.GetSpeed() <= 1)
+//    		{
+//    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
+//    		}
+//    	}
+//    	else if(!joy.getRawButton(8))
+//    	{
+//    		ignoreIncreaseSwitch = false;
+//    	}
+//    	
+//		//decrease speed button
+//    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
+//    	{
+//    		ignoreDecreaseSwitch = true;
+//    		
+//    		if(shooter.GetSpeed() >= 0)
+//    		{
+//    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
+//    		}
+//
+//    	}
+//    	else if(!joy.getRawButton(7))
+//    	{
+//    		ignoreDecreaseSwitch = false;
+//    	}
 
-    	}
-    	else if(!joy.getRawButton(7))
-    	{
-    		ignoreDecreaseSwitch = false;
-    	}
-    	
-		if(joy.getRawButton(9))
-		{
-			shooter.tweakPID(0.01);
-		}else if(joy.getRawButton(10)){
-			shooter.tweakPID(-0.01);
-		}
-    	
-    	//System.out.println("Speed is " + shooter.GetSpeed());
-    	//shooter.setP((-joy.getRawAxis(3))/2 + 0.5);
 	}
 	
 	@Override

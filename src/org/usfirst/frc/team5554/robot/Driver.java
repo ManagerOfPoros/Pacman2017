@@ -71,9 +71,11 @@ public class Driver extends RobotDrive
 		
 	}
 	
-	public void autonomousDrive(double speed , double curve)
+	public void autonomousDrive(double speed , double curve , boolean inverted)
 	{
 		setSafetyEnabled(false);
+		this.m_rearLeftMotor.setInverted(inverted);
+		this.m_rearRightMotor.setInverted(inverted);
 		drive(speed, curve);
 	}
 	

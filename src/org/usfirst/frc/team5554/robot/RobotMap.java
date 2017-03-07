@@ -51,18 +51,18 @@ public class RobotMap {
     public final static int RIGHT_ENCODER_CHANNELB = 6;
     public final static int SHOOTER_ENCODER_CHANNELA = 1;
     public final static int SHOOTER_ENCODER_CHANNELB = 2;
-    public final static int GEAR_MICROSWITCH_PORT =  0;
-    public final static int LEDS_PORT =  9;
+    public final static int GEAR_MICROSWITCH_PORT =  8;
+    public final static int LEDS_PORT =  7;
     public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
 /*****************Encoder Values*********************************************************/
     
     public final static double DIAMETER_OF_6INCHWHEEL = 15.24;
     public final static double ENCODER_ROUNDS_PER_REVOLUTION = 360;
-    public final static double PID_VALUE_P = 0.0746; //0.0746
+    public final static double PID_VALUE_P = 0.08746; //0.08746
     public final static double PID_VALUE_I = 0;	//0.00
-    public final static double PID_VALUE_D = 0.015; //0.015
-    public final static double PID_SPEED = 0.66;    //0.62
+    public final static double PID_VALUE_D = 0.015; //0.014
+    public final static double PID_SPEED = 0.57;    //0.62
     
 /*******************Autonomous Measurement***********************************************/
    

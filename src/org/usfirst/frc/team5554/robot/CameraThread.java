@@ -27,13 +27,13 @@ public class CameraThread extends Thread
 		/******************************Streaming Objects*******************************************/
 	
 		CameraHandler cameras = new CameraHandler(RobotMap.NUMBER_OF_CAMERAS,320,240);
-		VideoBox screen = new VideoBox(320 , 240 , "Live Feed");
+		VideoBox screen = new VideoBox(320 , 240 , "Live Feed");		
 
 		/******************************Sets All Of The Guide Lines*********************************/
 
-		gls.put("ShootingPoint0", new GuideLines(63, 232, 157, 240, new Scalar(0,0,255), 3));
-		gls.put("ShootingPoint0_Bound", new GuideLines(63, 232, 157, 157, new Scalar(0,0,255), 3));
-		gls.put("ShootingPoint1", new GuideLines(100, 219, 0, 240, new Scalar(0,0,255), 2));
+		gls.put("ShootingPoint0", new GuideLines(90, 197, 45, 150, new Scalar(0,0,255), 3));
+		gls.put("ShootingPoint0_Bound", new GuideLines(90, 197, 45, 45, new Scalar(0,0,255), 3));
+		gls.put("ShootingPoint1", new GuideLines(63, 219, 157, 240, new Scalar(0,0,255), 2));
 		gls.put("GearGuider1", new GuideLines(38 , 79 , 0 , 240 , new Scalar(255,0,0), 2));
 		gls.put("GearGuider2", new GuideLines(289 , 248 , 0 , 240 , new Scalar(255,0,0), 2));
 		

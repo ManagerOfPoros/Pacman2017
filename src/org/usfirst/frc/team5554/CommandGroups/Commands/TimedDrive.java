@@ -19,12 +19,14 @@ public class TimedDrive extends Command
 	@Override
 	protected void initialize()
 	{
+    	driver.autonomousDrive(0, 0 , false);
+    	driver.autonomousDrive(speed, 0 , false);
+
 	}
 	
 	@Override
 	protected void execute()
 	{
-		driver.autonomousDrive(speed , 0);
 	}
 
 	@Override
@@ -44,6 +46,6 @@ public class TimedDrive extends Command
 	@Override
 	protected void end()
 	{
-		driver.autonomousDrive(0 , 0);
+		driver.autonomousDrive(0 , 0 , false);
 	}
 }
