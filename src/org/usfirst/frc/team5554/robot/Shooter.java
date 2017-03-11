@@ -29,7 +29,7 @@ public class Shooter
 		shooter1.reverseSensor(false);
 		
 		shooter1.setProfile(0);
-		//shooter1.setF(0.8);
+		shooter1.setF(RobotMap.PID_VALUE_F);
 		shooter1.setP(RobotMap.PID_VALUE_P);
 		shooter1.setI(RobotMap.PID_VALUE_I); 
 		shooter1.setD(RobotMap.PID_VALUE_D);

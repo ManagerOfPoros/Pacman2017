@@ -3,7 +3,6 @@ package org.usfirst.frc.team5554.robot;
 import org.usfirst.frc.team5554.Controllers.Motor;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 
@@ -37,6 +36,16 @@ public class Driver extends RobotDrive
 		gyro.reset();
 	}
 	
+	public Driver(Motor left, Motor right , ADXRS450_Gyro gyro) 
+	{			
+		super(left , right);
+		
+		setSafetyEnabled(false);
+		
+		this.gyro = gyro;		
+		gyro.reset();
+	}
+	
 	/**
 	 * This function in charge of the movement of the robot with the joystick
 	 * @since 15/1/2017
@@ -45,9 +54,8 @@ public class Driver extends RobotDrive
 	 * @param slider The value of the joystick's slider axis
 	 * @author Gil Meri
 	 */
-	public void Moving(double slider, Joystick joy) 
+	public void Moving(double slider, double speed , double turn) 
 	{
-		
 		if(isEnabled)
 		{
 			slider = (-slider+1)/2;
@@ -66,17 +74,23 @@ public class Driver extends RobotDrive
 			}
 			
 			setSafetyEnabled(false);
-			arcadeDrive(joy.getY() , joy.getZ());
+			arcadeDrive(speed , turn);
 		}
 		
 	}
 	
 	public void autonomousDrive(double speed , double curve , boolean inverted)
 	{
+		
+		setMaxOutput(3.0);
 		setSafetyEnabled(false);
-		this.m_rearLeftMotor.setInverted(inverted);
-		this.m_rearRightMotor.setInverted(inverted);
-		drive(speed, curve);
+		arcadeDrive(speed, curve);
+		
+	}
+	
+	public void setExpiration(double timeout)
+	{
+		setExpiration(timeout);
 	}
 	
 	
@@ -110,8 +124,8 @@ public class Driver extends RobotDrive
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
 			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);
 			
-			((Motor)this.m_rearRightMotor).SetPID(1, 0.001, 2);
-			((Motor)this.m_rearLeftMotor).SetPID(1, 0.001, 2);
+			((Motor)this.m_rearRightMotor).SetPID(0.003, 0, 0);
+			((Motor)this.m_rearLeftMotor).SetPID(0.003, 0, 0);
 			
 			((Motor)this.m_rearRightMotor).GoDistance(rightDistance , invertDriver);
 			((Motor)this.m_rearLeftMotor).GoDistance(leftDistance , invertDriver);
@@ -171,6 +185,37 @@ public class Driver extends RobotDrive
 	{
 		gyro.reset();
 	}
+	
+	public void ResetEncoders()
+	{
+		leftEncoder.reset();
+		rightEncoder.reset();
+	}
+	
+	public double GetLeftEncValue()
+	{
+		return leftEncoder.get();
+	}
+	
+	public double GetRightEncValue()
+	{
+		return rightEncoder.get();
+	}
+	
+	public void invert()
+	{
+		if(this.isInvert == false)
+		{
+			this.isInvert = true;
+		}
+		else
+		{
+			this.isInvert = false;
+		}
+	}
+	
+	
+
 
 
 }

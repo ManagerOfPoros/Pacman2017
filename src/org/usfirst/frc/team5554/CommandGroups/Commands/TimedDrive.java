@@ -19,7 +19,6 @@ public class TimedDrive extends Command
 	@Override
 	protected void initialize()
 	{
-    	driver.autonomousDrive(0, 0 , false);
     	driver.autonomousDrive(speed, 0 , false);
 
 	}

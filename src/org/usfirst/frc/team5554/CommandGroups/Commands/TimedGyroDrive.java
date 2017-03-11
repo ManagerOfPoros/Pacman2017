@@ -2,6 +2,7 @@ package org.usfirst.frc.team5554.CommandGroups.Commands;
 
 import org.usfirst.frc.team5554.robot.Driver;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -11,7 +12,7 @@ public class TimedGyroDrive extends Command {
 	
 	private double speed;
 	private Driver driver;
-	private double kP = 0.02;
+	private final double kP = 0.03;
 
     public TimedGyroDrive(double speed, Driver driver, double timeout) 
     {
@@ -23,21 +24,21 @@ public class TimedGyroDrive extends Command {
     @Override
     protected void initialize() 
     {
-		driver.autonomousDrive(0 , 0 ,false);
         this.driver.ResetGyro();
     }
 
     @Override
     protected void execute() 
-    {
+    {    	
     	if(speed>0)
     	{
-    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP , false);
+    		driver.autonomousDrive(this.speed, driver.GetAngle()*kP, false);
     	}
-    	else
+    	else if(speed<0)
     	{
-    		driver.autonomousDrive(this.speed, +driver.GetAngle()*kP , false);
+    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP, false);
     	}
+    	Timer.delay(0.04);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class TimedGyroDrive extends Command {
     @Override
     protected void end() 
     {
-		driver.autonomousDrive(0 , 0 ,false);
+		driver.stopMotor();
     }
 
 }

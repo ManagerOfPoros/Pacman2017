@@ -2,14 +2,17 @@ package org.usfirst.frc.team5554.CommandGroups;
 
 import org.usfirst.frc.team5554.CommandGroups.Commands.*;
 import org.usfirst.frc.team5554.robot.Driver;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class PassBaseLine extends CommandGroup
 {
 	public PassBaseLine(Driver driver)
 	{
-		driver.ResetGyro();
-		addSequential(new TimedGyroDrive(0.3, driver , 2.5));
+		driver.CalibrateGyro();
+		Timer.delay(0.1);
+		addSequential(new TimedGyroDrive(0.3, driver , 2.9));
 		
 	}
 }

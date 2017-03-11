@@ -45,10 +45,10 @@ public class RobotMap {
     
 /*******************Sensors ports****************************************************************/
     
-    public final static int LEFT_ENCODER_CHANNELA = 3;
-    public final static int LEFT_ENCODER_CHANNELB = 4;
-    public final static int RIGHT_ENCODER_CHANNELA = 5;
-    public final static int RIGHT_ENCODER_CHANNELB = 6;
+    public final static int LEFT_ENCODER_CHANNELA = 0;
+    public final static int LEFT_ENCODER_CHANNELB = 1;
+    public final static int RIGHT_ENCODER_CHANNELA = 2;
+    public final static int RIGHT_ENCODER_CHANNELB = 3;
     public final static int SHOOTER_ENCODER_CHANNELA = 1;
     public final static int SHOOTER_ENCODER_CHANNELB = 2;
     public final static int GEAR_MICROSWITCH_PORT =  8;
@@ -57,11 +57,13 @@ public class RobotMap {
     
 /*****************Encoder Values*********************************************************/
     
-    public final static double DIAMETER_OF_6INCHWHEEL = 15.24;
+    public final static double PERIMETER_OF_LEFT = 21*3.14;
+    public final static double PERIMETER_OF_RIGHT = 24*3.14;
     public final static double ENCODER_ROUNDS_PER_REVOLUTION = 360;
     public final static double PID_VALUE_P = 0.08746; //0.08746
     public final static double PID_VALUE_I = 0;	//0.00
     public final static double PID_VALUE_D = 0.015; //0.014
+    public final static double PID_VALUE_F = 0.1;
     public final static double PID_SPEED = 0.57;    //0.62
     
 /*******************Autonomous Measurement***********************************************/
@@ -79,9 +81,9 @@ public class RobotMap {
 /*******************Cameras Values***************************************************/
     
     public final static int NUMBER_OF_CAMERAS = 3;
-    public final static int FRONT_CAMERA_IDX = 2;
-    public final static int SYSTEMS_CAMERA_IDX = 1;
-    public final static int SHOOTER_CAMERA_IDX = 0;
+    public final static int FRONT_CAMERA_IDX = 1;
+    public final static int SYSTEMS_CAMERA_IDX = 0;
+    public final static int SHOOTER_CAMERA_IDX = 2;
     public final static double FOCAL_LENGTH = 334.595;
     public final static double BOILER_WIDTH = 61;
 

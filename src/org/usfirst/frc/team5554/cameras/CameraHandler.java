@@ -16,6 +16,10 @@ public class CameraHandler
 	private CvSink cvSink = new CvSink("stream");
 	private int currentCamera; //The port of the current camera
 	private Mat mat;
+	private int fps = 20;
+	private int width = 320;
+	private int height = 240;
+	private int brightnes = 50;
 	
 	public CameraHandler(int ports,int width, int height)
 	{
@@ -23,14 +27,14 @@ public class CameraHandler
 		mat = new Mat();
 		for(int i = 0; i < ports; i++)
 		{
-			AddCamera(i, width, height);
+			AddCamera(i, width, height , 20 , 50);
 		}
 		cvSink.setSource(cameras.get(0));
 	}
 	
 	
 	
-	private void AddCamera(int idx, int width , int height)
+	private void AddCamera(int idx, int width , int height , int fps , int brightness)
 	{
 		if(!cameras.containsKey(idx))
 		{
@@ -39,6 +43,7 @@ public class CameraHandler
 				UsbCamera cam = new UsbCamera("cam"+String.valueOf(idx) , idx);
 				cam.setResolution(width, height);
 				cam.setFPS(30);
+				cam.setBrightness(brightness);
 				cameras.put(idx, cam);
 				
 			}
@@ -59,7 +64,12 @@ public class CameraHandler
 		if(idx != currentCamera)
 		{
 			cameras.get(currentCamera).setFPS(0);
-			cameras.get(idx).setFPS(30);
+			cameras.get(currentCamera).setResolution(0, 0);
+			cameras.get(currentCamera).setBrightness(0);
+			cameras.get(idx).setFPS(this.fps);
+			cameras.get(idx).setResolution(this.width, this.height);
+			cameras.get(idx).setBrightness(this.brightnes);
+			
 			cvSink.setSource(cameras.get(idx));
 			currentCamera = idx;
 		}

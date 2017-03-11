@@ -1,15 +1,11 @@
 package org.usfirst.frc.team5554.robot;
 
 import org.usfirst.frc.team5554.CommandGroups.*;
-import org.usfirst.frc.team5554.Controllers.Indicator;
 import org.usfirst.frc.team5554.Controllers.Motor;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,7 +18,6 @@ public class Robot extends IterativeRobot {
 	private Driver driver;
 	private Shooter shooter;
 	private Feeder feeder;
-	private Indicator gears;
 	private Climb climber;
 	private CameraThread streamer;
 	
@@ -34,15 +29,15 @@ public class Robot extends IterativeRobot {
 	/*****************************************Autonomous******************************************/
 	
 	private Command autonomousCommand;
-	private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
 	/****************************************Flags************************************************/
 	
 	public static boolean isInShootingMode;
-	public static boolean isInAutonomousMode;
 	
-//	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
-//	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+	
 	
 	
 	@Override
@@ -50,27 +45,24 @@ public class Robot extends IterativeRobot {
 	{
 		/****************************************Controllers********************************************/
 		
+		
 		//Driving
-		Spark LEDs = new Spark(RobotMap.LEDS_PORT);
-		DigitalInput microSwitch = new DigitalInput(RobotMap.GEAR_MICROSWITCH_PORT);
 		Motor left = new Motor(RobotMap.MOTOR_LEFT);
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
-		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , true , CounterBase.EncodingType.k4X);
-		leftEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
-		rightEnc.setDistancePerPulse(RobotMap.DIAMETER_OF_6INCHWHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , false);
+		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , false);
+		leftEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_LEFT/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		rightEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_RIGHT/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		ADXRS450_Gyro gyro = new ADXRS450_Gyro(RobotMap.GYRO_PORT);
-		gyro.reset();
 				
 		/***********************************Declaring Operator Objects***********************************************/
 		
-		driver = new Driver(left,right ,leftEnc ,rightEnc ,gyro);
+		driver = new Driver(left,right , leftEnc, rightEnc,gyro);
+		driver.CalibrateGyro();
 		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ZERO, RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SCRAMBLE);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
-		gears = new Indicator(microSwitch);		
-		gears.SetOutpotDevice(LEDs);
 		
 		/**********************************Joysticks Declaration****************************************************/
 		
@@ -84,18 +76,12 @@ public class Robot extends IterativeRobot {
 		
 		/***********************************Autonomous Options***********************************************/
 		
-		autoChooser.addDefault("Empty", new Empty());
-		autoChooser.addObject("PassBseLine", new PassBaseLine(driver));
-		autoChooser.addObject("PlaceFrontGear", new PlaceFrontGear(driver));
-		autoChooser.addObject("AutoShoot", new ShootAuto(shooter));
+		autoChooser.addDefault("Empty", ((Command)new Empty()));
+		autoChooser.addObject("PassBseLine", ((Command)new PassBaseLine(driver)));
+		autoChooser.addObject("PlaceFrontGear", ((Command)new PlaceFrontGear(driver)));
 		SmartDashboard.putData("Auto Selector" , autoChooser);
 
 		
-	}
-	
-	@Override
-	public void robotPeriodic()
-	{
 	}
 
 	@Override
@@ -107,7 +93,7 @@ public class Robot extends IterativeRobot {
 		 *If both are selected empty then nothing will happen during the autonomous period.
 		 *If both sides are picked then nothing will happen during the autonomous period.
 		**/
-		autonomousCommand = autoChooser.getSelected();
+		autonomousCommand = ((Command)autoChooser.getSelected());
 		autonomousCommand.start();
 				
 	}
@@ -115,30 +101,29 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() 
 	{
-		gears.SetOutputDeviceState(0.3);
 		Scheduler.getInstance().run();
-		isInAutonomousMode = isAutonomous();
 	}
 	
 	@Override
 	public void teleopInit()
 	{
 		CameraThread.toSwitch = true;
+		driver.enable();
 	}
 
 	@Override
 	public void teleopPeriodic() 
-	{
+	{		
 		/****************************************** Driving ********************************************/
 
-		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS) , joy);
+		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS) , joy.getY() , joy.getZ()*0.75);  //lowers the sensitivity of the turns
 	
 		/****************************************** Shooter&Scramble ********************************************/
 		
 		//Shooter
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
 		{
-			shooter.PidShoot(RobotMap.PID_SPEED);
+			shooter.PidShoot(shooter.GetSpeed());
 			Robot.isInShootingMode = true;
 			driver.disable();
 		}
@@ -186,7 +171,7 @@ public class Robot extends IterativeRobot {
     	
     	/**************************************** Gear Holder ******************************************/
 	
-		gears.SetOutputDeviceState(0.3);
+		/////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/****************************************** Climbing *******************************************/
 		
@@ -203,35 +188,42 @@ public class Robot extends IterativeRobot {
 			climber.climb(0);
 		}
 		
-//    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
-//    	{
-//			ignoreIncreaseSwitch = true;
-//			
-//    		if(shooter.GetSpeed() <= 1)
-//    		{
-//    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
-//    		}
-//    	}
-//    	else if(!joy.getRawButton(8))
-//    	{
-//    		ignoreIncreaseSwitch = false;
-//    	}
-//    	
-//		//decrease speed button
-//    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
-//    	{
-//    		ignoreDecreaseSwitch = true;
-//    		
-//    		if(shooter.GetSpeed() >= 0)
-//    		{
-//    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
-//    		}
-//
-//    	}
-//    	else if(!joy.getRawButton(7))
-//    	{
-//    		ignoreDecreaseSwitch = false;
-//    	}
+		/************************************** Tests **************************************************/
+		
+		SmartDashboard.putNumber("ShooterPwm", shooter.GetSpeed());
+		
+    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
+    	{
+			ignoreIncreaseSwitch = true;
+			
+    		if(shooter.GetSpeed() <= 1)
+    		{
+    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
+    			System.out.println("increase");
+    		}
+    	}
+    	else if(!joy.getRawButton(8))
+    	{
+    		ignoreIncreaseSwitch = false;
+    	}
+    	
+		//decrease speed button
+    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
+    	{
+    		ignoreDecreaseSwitch = true;
+    		
+    		if(shooter.GetSpeed() >= 0)
+    		{
+    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
+    			System.out.println("decrease");
+    		}
+
+    	}
+    	else if(!joy.getRawButton(7))
+    	{
+    		ignoreDecreaseSwitch = false;
+    	}
+    	
 
 	}
 	
