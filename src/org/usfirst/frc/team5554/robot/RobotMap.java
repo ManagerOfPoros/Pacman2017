@@ -74,7 +74,7 @@ public class RobotMap {
     
 /*******************************Field Distances In Centimeters And Degrees******************************/
     
-    public final static double DISTANCE_FROM_ALLIANCE_WALL_TO_AIRSHIP = 300;
+    public final static double DISTANCE_FROM_ALLIANCE_WALL_TO_AIRSHIP = 305;
     public final static int DISTANCE_FROM_ALLIANCE_WALL_TO_BASELINE = 250;
     public final static double DISTANCE_FROM_ALLIANCE_WALL_TO_LEFT_SPRING = 400; 
     public final static double DISTANCE_FROM_ALLIANCE_WALL_TO_RIGHT_SPRING = 400;
