@@ -85,9 +85,17 @@ public class Motor extends Victor{
 		}
 	}
 	
+	public void enableController()
+	{
+		if(controller != null)
+		{
+			controller.enable();
+		}
+	}
+	
 	public boolean onTarget(double tolerance)
 	{		
-		controller.setAbsoluteTolerance(tolerance);;
+		controller.setAbsoluteTolerance(tolerance);
 		return controller.onTarget();		
 	}
 	
@@ -95,6 +103,18 @@ public class Motor extends Victor{
 	{
 		return controller.getError();
 	}
+	
+	public void setInputRange(double minValue , double maxValue)
+	{
+		controller.setInputRange(minValue, maxValue);
+	}
+	
+	public void setCountinues(boolean countinues)
+	{
+		controller.setContinuous(countinues);
+	}
+	
+
 
 
 }

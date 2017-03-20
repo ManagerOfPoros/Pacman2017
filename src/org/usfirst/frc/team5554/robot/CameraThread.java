@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class CameraThread extends Thread
 {
 	private Joystick joy;
+	private Joystick xbox;
 	public static boolean toSwitch = false;
 	public static double shootingPoint = 0;
 	
@@ -19,6 +20,7 @@ public class CameraThread extends Thread
 	public CameraThread(Joystick operator, Joystick assistant)
 	{
 		joy = operator;
+		xbox = assistant;
 	}
 	
 	@Override	
@@ -27,7 +29,7 @@ public class CameraThread extends Thread
 		/******************************Streaming Objects*******************************************/
 	
 		CameraHandler cameras = new CameraHandler(RobotMap.NUMBER_OF_CAMERAS,320,240);
-		VideoBox screen = new VideoBox(320 , 240, "Live Feed");		
+		VideoBox screen = new VideoBox(320,240, "Live Feed");		
 
 		/******************************Sets All Of The Guide Lines*********************************/
 
@@ -52,7 +54,7 @@ public class CameraThread extends Thread
 			{
 				/***********************Chooses Which Camera To Stream********************************/
 				
-				if(joy.getRawButton(RobotMap.JOYSTICK_SHOW_SYSCAM) && ignoreButton4== false && !Robot.isInShootingMode)
+				if(xbox.getRawButton(RobotMap.XBOX_SHOW_SYSCAM) && ignoreButton4== false && !Robot.isInShootingMode)
 				{
 					ignoreButton4 = true;
 				
@@ -66,7 +68,7 @@ public class CameraThread extends Thread
 					}
 	    		
 				}
-				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_SYSCAM))
+				else if(!xbox.getRawButton(RobotMap.XBOX_SHOW_SYSCAM))
 				{
 					ignoreButton4 = false;
 				}
@@ -94,6 +96,7 @@ public class CameraThread extends Thread
 					}
 					
 					cameras.SetStreamer(liveCamera);
+				
 				}
 				else
 				{
@@ -137,13 +140,7 @@ public class CameraThread extends Thread
 				
 				/*************************Chooses The GuideLines TO Show && Rotation***********************************/
 				
-				if(liveCamera == RobotMap.SHOOTER_CAMERA_IDX && !isSystemsCamera)
-				{
-					screen.stream(screen.DrawLine(
-							screen.DrawGuideLines(cameras.GetStream(), gls.get("ShootingPoint0")) ,
-								gls.get("ShootingPoint0_Bound")));
-				}
-				else if(showGearGuider  && !isSystemsCamera)
+				if(showGearGuider  && !isSystemsCamera)
 				{
 					screen.stream(
 							screen.DrawGuideLines(cameras.GetStream() , gls.get("GearGuider")));

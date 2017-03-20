@@ -64,17 +64,19 @@ public class Driver extends RobotDrive
 			//If +slider and -slider can change the front of the motor since
 			//they determine if the scalar is from 0-1 or from -1 to 0.
 			
+			setSafetyEnabled(false);
+			
 			if(isInvert == false)
 			{
 				setMaxOutput(slider);
+				arcadeDrive(speed , -turn);
 			}
 			else
 			{
 				setMaxOutput(-slider);
+				arcadeDrive(speed , turn);
 			}
 			
-			setSafetyEnabled(false);
-			arcadeDrive(speed , turn);
 		}
 		
 	}
@@ -82,9 +84,9 @@ public class Driver extends RobotDrive
 	public void autonomousDrive(double speed , double curve , boolean inverted)
 	{
 		
-		setMaxOutput(3.0);
+		setMaxOutput(-1.0);
 		setSafetyEnabled(false);
-		arcadeDrive(speed, curve);
+		drive(speed, curve);
 		
 	}
 	
@@ -106,13 +108,14 @@ public class Driver extends RobotDrive
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
 			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);		
 		
-			((Motor)this.m_rearRightMotor).SetPID(0.008, 0.0001, 0.003);
-			((Motor)this.m_rearLeftMotor).SetPID(0.008, 0.0001, 0.003);
+			((Motor)this.m_rearRightMotor).SetPID(0.008, 0.000, 0.001);
+			((Motor)this.m_rearLeftMotor).SetPID(0.008, 0.000, 0.001);
 		
 			((Motor)this.m_rearRightMotor).GoDistance(degrees , invertRight);
 			((Motor)this.m_rearLeftMotor).GoDistance(degrees , invertLeft);
 		}
 	}	
+		
 	
 	public void DriveDistance(double leftDistance, double rightDistance, boolean invertDriver)
 	{
@@ -161,6 +164,12 @@ public class Driver extends RobotDrive
 		((Motor)this.m_rearLeftMotor).disController();
 	}
 	
+	public void enableController()
+	{
+		((Motor)this.m_rearRightMotor).enableController();
+		((Motor)this.m_rearLeftMotor).enableController();
+	}
+	
 	public double GetError()
 	{
 		return ((Motor)this.m_rearRightMotor).GetError();
@@ -194,12 +203,12 @@ public class Driver extends RobotDrive
 	
 	public double GetLeftEncValue()
 	{
-		return leftEncoder.get();
+		return leftEncoder.getDistance();
 	}
 	
 	public double GetRightEncValue()
 	{
-		return rightEncoder.get();
+		return rightEncoder.getDistance();
 	}
 	
 	public void invert()
@@ -212,6 +221,11 @@ public class Driver extends RobotDrive
 		{
 			this.isInvert = false;
 		}
+	}
+	
+	public boolean isInverted()
+	{
+		return isInvert;
 	}
 	
 	

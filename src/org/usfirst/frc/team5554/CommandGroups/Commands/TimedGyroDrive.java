@@ -12,7 +12,7 @@ public class TimedGyroDrive extends Command {
 	
 	private double speed;
 	private Driver driver;
-	private final double kP = 0.03;
+	private final double kP = 0.003;
 
     public TimedGyroDrive(double speed, Driver driver, double timeout) 
     {
@@ -32,11 +32,11 @@ public class TimedGyroDrive extends Command {
     {    	
     	if(speed>0)
     	{
-    		driver.autonomousDrive(this.speed, driver.GetAngle()*kP, false);
+    		driver.autonomousDrive(-this.speed, -driver.GetAngle()*kP, false);
     	}
     	else if(speed<0)
     	{
-    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP, false);
+    		driver.autonomousDrive(this.speed, +driver.GetAngle()*kP, false);
     	}
     	Timer.delay(0.04);
     }

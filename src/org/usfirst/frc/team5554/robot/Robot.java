@@ -16,7 +16,7 @@ public class Robot extends IterativeRobot {
 	/****************************************Operator Objects**********************************************/
 	
 	private Driver driver;
-	private Shooter shooter;
+//	private Shooter shooter;
 	private Feeder feeder;
 	private Climb climber;
 	private CameraThread streamer;
@@ -35,8 +35,7 @@ public class Robot extends IterativeRobot {
 	
 	public static boolean isInShootingMode;
 	
-	private boolean ignoreIncreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
-	private boolean ignoreDecreaseSwitch = false; // for tests only!!!!!!!!!!!!!!
+	private boolean ignoreButton4 = false; 
 	
 	
 	
@@ -51,15 +50,15 @@ public class Robot extends IterativeRobot {
 		Motor right = new Motor(RobotMap.MOTOR_RIGHT);
 		Encoder leftEnc = new Encoder(RobotMap.LEFT_ENCODER_CHANNELA , RobotMap.LEFT_ENCODER_CHANNELB , false);
 		Encoder rightEnc = new Encoder(RobotMap.RIGHT_ENCODER_CHANNELA , RobotMap.RIGHT_ENCODER_CHANNELB , false);
-		leftEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_LEFT/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
-		rightEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_RIGHT/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		leftEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_LEFT_WHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
+		rightEnc.setDistancePerPulse(RobotMap.PERIMETER_OF_RIGHT_WHEEL/RobotMap.ENCODER_ROUNDS_PER_REVOLUTION);
 		ADXRS450_Gyro gyro = new ADXRS450_Gyro(RobotMap.GYRO_PORT);
 				
 		/***********************************Declaring Operator Objects***********************************************/
 		
 		driver = new Driver(left,right , leftEnc, rightEnc,gyro);
 		driver.CalibrateGyro();
-		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ZERO, RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SCRAMBLE);
+//		shooter = new Shooter(RobotMap.MOTOR_SHOOTER_ZERO, RobotMap.MOTOR_SHOOTER_ONE, RobotMap.MOTOR_SCRAMBLE);
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
@@ -77,9 +76,11 @@ public class Robot extends IterativeRobot {
 		/***********************************Autonomous Options***********************************************/
 		
 		autoChooser.addDefault("Empty", ((Command)new Empty()));
-		autoChooser.addObject("PassBseLine", ((Command)new PassBaseLine(driver)));
+		autoChooser.addObject("PassBaseLine", ((Command)new PassBaseLine(driver)));
 		autoChooser.addObject("PlaceFrontGear", ((Command)new PlaceFrontGear(driver)));
-		SmartDashboard.putData("Auto Selector" , autoChooser);
+		autoChooser.addObject("PlaceLeftSideGear", ((Command)new PlaceLeftSideGear(driver)));
+		autoChooser.addObject("PlaceRightSideGear", ((Command)new PlaceRightSideGear(driver)));
+		SmartDashboard.putData("Autonomous Chooser" , autoChooser);
 
 		
 	}
@@ -108,7 +109,12 @@ public class Robot extends IterativeRobot {
 	public void teleopInit()
 	{
 		CameraThread.toSwitch = true;
+		
 		driver.enable();
+		if(driver.isInverted() == false)
+		{
+			driver.invert();
+		}
 	}
 
 	@Override
@@ -118,41 +124,47 @@ public class Robot extends IterativeRobot {
 
 		driver.Moving(joy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS) , joy.getY() , joy.getZ()*0.75);  //lowers the sensitivity of the turns
 	
+    	if(joy.getRawButton(4) && ignoreButton4 == false)
+    	{
+    		ignoreButton4 = true;
+			
+    		driver.invert();
+    	}
+    	else if(!joy.getRawButton(4))
+    	{
+    		ignoreButton4 = false;
+    	}
+		
 		/****************************************** Shooter&Scramble ********************************************/
 		
-		//Shooter
-		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
-		{
-			shooter.PidShoot(shooter.GetSpeed());
-			Robot.isInShootingMode = true;
-			driver.disable();
-		}
-		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SHOOTER_BACKWARD))
-		{
-			shooter.shoot(0.5);
-			Robot.isInShootingMode = false;
-			driver.enable();
-		}
-		else
-		{
-			shooter.shoot(0);
-			Robot.isInShootingMode = false;
-			driver.enable();
-		}
-		
-		//Scramble
-		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 )
-		{
-			shooter.scramble(0.8);
-		}
-		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
-		{
-			shooter.scramble(-0.8);
-		}
-		else
-		{
-			shooter.scramble(0);
-		}
+//		
+//		//Shooter
+//		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
+//		{
+//			shooter.PidShoot(shooter.GetSpeed());
+//			Robot.isInShootingMode = true;
+//			driver.disable();
+//		}
+//		else
+//		{
+//			shooter.shoot(0);
+//			Robot.isInShootingMode = false;
+//			driver.enable();
+//		}
+//		
+//		//Scramble
+//		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_SCRAMBLE_FORWARD) > 0.1 )
+//		{
+//			shooter.scramble(0.8);
+//		}
+//		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_SCRAMBLE_BACKWARD))
+//		{
+//			shooter.scramble(-0.8);
+//		}
+//		else
+//		{
+//			shooter.scramble(0);
+//		}
     	
 		/****************************************** Feeder *********************************************/
 		
@@ -177,53 +189,30 @@ public class Robot extends IterativeRobot {
 		
 		if(xbox.getRawButton(RobotMap.XBOX_CLIMB_BUTTON))
 		{
-			climber.climb(1);
+			climber.climb(0.4);    //was 0.5
+		}
+		else if(xbox.getRawButton(RobotMap.XBOX_CLIMB_FAST_BUTTON))
+		{
+			climber.climb(0.6);   //was 0.8
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_REVERSE_CLIMB_BUTTON))
 		{
-			climber.climb(-1);
+			climber.climb(-0.4);  // was -0.5  
+		}
+		else if(xbox.getRawButton(RobotMap.XBOX_CLIMB_SUPERFAST_BUTTON))
+		{
+			climber.climb(0.8);   //was 1
+		}
+		else if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT)>0)
+		{
+			climber.climb(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT));
 		}
 		else
 		{
 			climber.climb(0);
-		}
+		}   
 		
-		/************************************** Tests **************************************************/
-		
-		SmartDashboard.putNumber("ShooterPwm", shooter.GetSpeed());
-		
-    	if(joy.getRawButton(8) && ignoreIncreaseSwitch == false)
-    	{
-			ignoreIncreaseSwitch = true;
-			
-    		if(shooter.GetSpeed() <= 1)
-    		{
-    			shooter.SetSpeed(shooter.GetSpeed()+0.01);
-    			System.out.println("increase");
-    		}
-    	}
-    	else if(!joy.getRawButton(8))
-    	{
-    		ignoreIncreaseSwitch = false;
-    	}
-    	
-		//decrease speed button
-    	if(joy.getRawButton(7) && ignoreDecreaseSwitch == false)
-    	{
-    		ignoreDecreaseSwitch = true;
-    		
-    		if(shooter.GetSpeed() >= 0)
-    		{
-    			shooter.SetSpeed(shooter.GetSpeed()-0.01);
-    			System.out.println("decrease");
-    		}
 
-    	}
-    	else if(!joy.getRawButton(7))
-    	{
-    		ignoreDecreaseSwitch = false;
-    	}
-    	
 
 	}
 	

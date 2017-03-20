@@ -11,9 +11,9 @@ public class DistanceGyroDrive extends Command{
 	private Driver driver;
 	private double distance;
 	
-	private final double kP = 0.03;
+	private final double kP = 0.003;
 	
-	public DistanceGyroDrive(Driver driver , double speed , double distance)
+	public DistanceGyroDrive(double speed , Driver driver , double distance)    //distance in cm
 	{
 		super("DistanceGyroDrive");
 		
@@ -28,6 +28,7 @@ public class DistanceGyroDrive extends Command{
 	{
         this.driver.ResetGyro();
         this.driver.ResetEncoders();
+        
 	}
 	
 	@Override
@@ -35,30 +36,32 @@ public class DistanceGyroDrive extends Command{
 	{
     	if(speed>0)
     	{
-    		driver.autonomousDrive(this.speed, driver.GetAngle()*kP, false);
+    		driver.autonomousDrive(-this.speed, -driver.GetAngle()*kP, false);
     	}
-    	else if(speed<0)
+    	else if(speed<0)                                                        //for the code being generic
     	{
-    		driver.autonomousDrive(this.speed, -driver.GetAngle()*kP, false);
-    	}
-    	Timer.delay(0.04);
+    		driver.autonomousDrive(this.speed, driver.GetAngle()*kP, false);
+		}
+		Timer.delay(0.04);
 	}
 		
 	@Override
 	protected boolean isFinished() 
 	{
 		if(speed>0)
-			if(driver.GetLeftEncValue() >= distance)
+			
+			if(driver.GetRightEncValue() >= distance)
 			{
+				System.out.println("value is: " + driver.GetRightEncValue());
 				return true;
 			}
 			else
 			{
 				return false;
 			}
-		else
+		else                                     // for the code being generic
 		{
-			if(driver.GetLeftEncValue() <= distance)
+			if(driver.GetRightEncValue() <= distance)
 			{
 				return true;
 			}
@@ -72,6 +75,7 @@ public class DistanceGyroDrive extends Command{
 	@Override
 	protected void end()
 	{
+		//driver.disController();
 		driver.stopMotor();
 	}
 

@@ -13,9 +13,9 @@ public class AutoSpin extends Command
 	int degrees;
 	Driver driver;
 	
-    public AutoSpin(int degrees, Driver driver)
+    public AutoSpin(int degrees, Driver driver, double timeout)
     {
-    	super("Auto Spin");
+    	super("Auto Spin", timeout);
     	this.degrees = degrees;
     	this.driver = driver;
     }
@@ -23,27 +23,36 @@ public class AutoSpin extends Command
 	@Override
     protected void initialize() 
 	{
-    	driver.Spin(degrees , false, false);
-    	System.out.println("initialized");
-    }
+	    	driver.Spin(degrees , false, false);
+	}
+
 
 	@Override
 	protected boolean isFinished()
 	{
-		if(driver.GetError() < 1)
-		{
-	    	System.out.printf("Spinned %d degrees", degrees);
-			return true;
+		if(degrees<0){
+			
+			if(driver.GetError()>-3 || isTimedOut())
+				return true;
+			
 		}
-		else 
-		{
-			return false;
+		
+		if(degrees>0){
+			
+			if(driver.GetError()<3 || isTimedOut())
+				return true;
 		}
+		
+		return false;
 	}
+	
+	
+
 	
 	@Override
 	protected void end()
 	{
+		//driver.stopMotor();
 		driver.disController();		
 	}
 
