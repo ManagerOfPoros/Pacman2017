@@ -54,7 +54,7 @@ public class Driver extends RobotDrive
 	 * @param slider The value of the joystick's slider axis
 	 * @author Gil Meri
 	 */
-	public void Moving(double slider, double speed , double turn) 
+	public void ArcadeDrive(double slider, double speed , double turn) 
 	{
 		if(isEnabled)
 		{
@@ -75,6 +75,34 @@ public class Driver extends RobotDrive
 			{
 				setMaxOutput(-slider);
 				arcadeDrive(speed , turn);
+			}
+			
+		}
+		
+	}
+	
+	public void TankDrive(double leftValue, double rightValue , double slider) 
+	{
+		if(isEnabled)
+		{
+			
+			slider = (-slider+1)/2;
+			
+			//Gives us freedom to manipulte the front of the robot.
+			//If +slider and -slider can change the front of the motor since
+			//they determine if the scalar is from 0-1 or from -1 to 0.
+			
+			setSafetyEnabled(false);
+			
+			if(isInvert == false)
+			{
+				setMaxOutput(slider);
+				tankDrive(leftValue , rightValue);
+			}
+			else
+			{
+				setMaxOutput(-slider);
+				tankDrive(leftValue , rightValue);
 			}
 			
 		}
@@ -108,8 +136,8 @@ public class Driver extends RobotDrive
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
 			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);		
 		
-			((Motor)this.m_rearRightMotor).SetPID(0.008, 0.000, 0.001);
-			((Motor)this.m_rearLeftMotor).SetPID(0.008, 0.000, 0.001);
+			((Motor)this.m_rearRightMotor).SetPID(0.01, 0.000, 0.002);
+			((Motor)this.m_rearLeftMotor).SetPID(0.01, 0.000, 0.002);
 		
 			((Motor)this.m_rearRightMotor).GoDistance(degrees , invertRight);
 			((Motor)this.m_rearLeftMotor).GoDistance(degrees , invertLeft);

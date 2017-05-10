@@ -12,6 +12,7 @@ public class Shooter
 	private CANTalon shooter1;
 	private Victor scramble;
 	private double velocity = RobotMap.PID_SPEED;
+	double targetSpeed;
 
 	public Shooter(int shooter0Port, int shooter1Port, int scramblePort)
 	{
@@ -26,7 +27,7 @@ public class Shooter
 		shooter1.configPeakOutputVoltage(+12.0f, -12.0f);
 		
 		shooter1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-		shooter1.reverseSensor(false);
+		shooter1.reverseSensor(true);
 		
 		shooter1.setProfile(0);
 		shooter1.setF(RobotMap.PID_VALUE_F);
@@ -45,8 +46,8 @@ public class Shooter
 		
 		shooter0.set(speed);
 		shooter1.set(speed);
+
 		
-		 //System.out.println("enc velocity " + shooter1.getEncVelocity());
 
 	}
 		
@@ -58,12 +59,16 @@ public class Shooter
 	public void PidShoot(double speed)
 	{					
 		
+		System.out.println(shooter1.getEncVelocity());
+		
 		final int RPM = 1500; //was 200
         /* Speed mode */
-        double targetSpeed = speed * RPM; /* 1500 RPM in either direction */
+        targetSpeed = speed * RPM; /* 1500 RPM in either direction */
+        
+        shooter1.changeControlMode(TalonControlMode.Speed);
         shooter0.changeControlMode(TalonControlMode.Follower);
-        shooter1.changeControlMode(TalonControlMode.Speed); 
-        shooter1.set(-targetSpeed);
+       
+        shooter1.set((-targetSpeed));
         shooter0.set(shooter1.getDeviceID());
 
 	}
@@ -112,6 +117,10 @@ public class Shooter
 		if(incroment + shooter1.getD() <= -1.0) incroment += -1.0 + shooter1.getD();
 		shooter1.setD(shooter1.getD() + incroment);
 		
+	}
+	public int getEncCount()
+	{
+		return shooter1.getEncPosition();
 	}
 
 }

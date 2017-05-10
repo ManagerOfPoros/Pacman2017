@@ -8,6 +8,7 @@ import org.opencv.core.Mat;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoException;
+import edu.wpi.first.wpilibj.Joystick;
 
 
 public class CameraHandler 
@@ -85,6 +86,31 @@ public class CameraHandler
 		cameras.clear();
 	}
 	
+	public static int PickCamera(int liveCamera, int[] cameraButtons , Joystick joy, int cameras)
+	{
+		for(int i = 0; i < cameras ; i++)
+		{			
+			if(joy.getRawButton(cameraButtons[i]))
+			{
+				liveCamera = i;
+			}
+		}
+		
+		return liveCamera;
+	}
+	
+	public static int PickCamera(int liveCamera, int[] pov , Joystick joy, int cameras , int povIndex)
+	{
+		for(int i = 0; i < cameras ; i++)
+		{			
+			if(joy.getPOV() == pov[i])
+			{
+				liveCamera = i;
+			}
+		}
+		
+		return liveCamera;
+	}
 	
 	
 }

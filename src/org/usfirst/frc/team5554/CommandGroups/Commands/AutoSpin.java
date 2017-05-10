@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj.command.Command;
 public class AutoSpin extends Command 
 {
 	
-	int degrees;
+	double degrees;
 	Driver driver;
 	
-    public AutoSpin(int degrees, Driver driver, double timeout)
+    public AutoSpin(double degrees, Driver driver, double timeout)
     {
     	super("Auto Spin", timeout);
     	this.degrees = degrees;
@@ -52,7 +52,7 @@ public class AutoSpin extends Command
 	@Override
 	protected void end()
 	{
-		//driver.stopMotor();
+		driver.stopMotor();
 		driver.disController();		
 	}
 

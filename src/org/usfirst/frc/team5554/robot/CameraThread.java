@@ -1,26 +1,20 @@
 package org.usfirst.frc.team5554.robot;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.opencv.core.Scalar;
 import org.usfirst.frc.team5554.cameras.CameraHandler;
-import org.usfirst.frc.team5554.cameras.GuideLines;
 import org.usfirst.frc.team5554.cameras.VideoBox;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class CameraThread extends Thread
 {
 	private Joystick joy;
-	private Joystick xbox;
 	public static boolean toSwitch = false;
 	public static double shootingPoint = 0;
 	
-	private Map<String,GuideLines> gls = new HashMap<String,GuideLines>();
+//	private Map<String,GuideLines> gls = new HashMap<String,GuideLines>();
 	
-	public CameraThread(Joystick operator, Joystick assistant)
+	public CameraThread(Joystick operator)
 	{
 		joy = operator;
-		xbox = assistant;
 	}
 	
 	@Override	
@@ -33,18 +27,15 @@ public class CameraThread extends Thread
 
 		/******************************Sets All Of The Guide Lines*********************************/
 
-		gls.put("ShootingPoint0", new GuideLines(98, 189, 45, 150, new Scalar(0,0,255), 3));
-		gls.put("ShootingPoint0_Bound", new GuideLines(98, 189, 45, 45, new Scalar(0,0,255), 3));
-		gls.put("ShootingPoint1", new GuideLines(63, 219, 157, 240, new Scalar(0,0,255), 2));
-		gls.put("GearGuider", new GuideLines(228 , 48 , 0 , 240 , new Scalar(255,0,0), 2));
+//		gls.put("ShootingPoint0", new GuideLines(98, 189, 45, 150, new Scalar(0,0,255), 3));
+//		gls.put("ShootingPoint0_Bound", new GuideLines(98, 189, 45, 45, new Scalar(0,0,255), 3));
+//		gls.put("ShootingPoint1", new GuideLines(63, 219, 157, 240, new Scalar(0,0,255), 2));
+//		gls.put("GearGuider", new GuideLines(228 , 48 , 0 , 240 , new Scalar(255,0,0), 2));
 		
 		/*****************************Flags****************************************************/
 	
-		boolean showGearGuider = false;
-		boolean ignoreButton2 = false;
-		boolean ignoreButton3 = false;
-		boolean ignoreButton4 = false;
-		boolean isSystemsCamera = false;
+//		boolean showGearGuider = false;
+//		boolean ignoreButton3 = false;
 		int liveCamera = RobotMap.FRONT_CAMERA_IDX;
 				
 		/******************************The Thread Main body***************************************/
@@ -54,75 +45,19 @@ public class CameraThread extends Thread
 			{
 				/***********************Chooses Which Camera To Stream********************************/
 				
-				if(xbox.getRawButton(RobotMap.XBOX_SHOW_SYSCAM) && ignoreButton4== false && !Robot.isInShootingMode)
-				{
-					ignoreButton4 = true;
-				
-					if(isSystemsCamera)
-					{
-						isSystemsCamera = false;
-					}
-					else
-					{
-						isSystemsCamera = true;
-					}
-	    		
-				}
-				else if(!xbox.getRawButton(RobotMap.XBOX_SHOW_SYSCAM))
-				{
-					ignoreButton4 = false;
-				}
-				
-				if(!isSystemsCamera)
-				{
-					if(joy.getRawButton(RobotMap.JOYSTICK_CAM_SWITCH) && ignoreButton2== false && !Robot.isInShootingMode)
-					{
-						ignoreButton2 = true;
-					
-						if(liveCamera == RobotMap.FRONT_CAMERA_IDX)
-						{
-							liveCamera = RobotMap.SHOOTER_CAMERA_IDX;
-							
-						}
-						else
-						{
-							liveCamera = RobotMap.FRONT_CAMERA_IDX;
-						}
-		    		
-					}
-					else if(!joy.getRawButton(RobotMap.JOYSTICK_CAM_SWITCH))
-					{
-						ignoreButton2 = false;
-					}
-					
-					cameras.SetStreamer(liveCamera);
-				
-				}
-				else
-				{
-					cameras.SetStreamer(RobotMap.SYSTEMS_CAMERA_IDX);
-				}
+				liveCamera = CameraHandler.PickCamera(liveCamera, RobotMap.CAMERAPOV, joy, RobotMap.NUMBER_OF_CAMERAS , 0);
+				cameras.SetStreamer(liveCamera);
 				
 				/********************************Chooses The GuideLines TO Show***********************************/	
 				
-				if(joy.getRawButton(RobotMap.JOYSTICK_SHOW_GEARGL) && ignoreButton3 == false && liveCamera == RobotMap.FRONT_CAMERA_IDX)
-				{
-					ignoreButton3 = true;
-				
-					if(showGearGuider == false)
-					{
-						showGearGuider = true;
-					}
-					else
-					{
-						showGearGuider = false;
-					}
-	    		
-				}
-				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_GEARGL))
-				{
-					ignoreButton3 = false;
-				}
+//				if(joy.getRawButton(RobotMap.JOYSTICK_SHOW_GEARLINES) && ignoreButton3 == false && liveCamera == RobotMap.FRONT_CAMERA_IDX)
+//				{
+//					ignoreButton3 = true;
+//				}
+//				else if(!joy.getRawButton(RobotMap.JOYSTICK_SHOW_GEARLINES))
+//				{
+//					ignoreButton3 = false;
+//				}
 				
 				/********************************Narrows And Dialates Shooter Gls********************************/
 				
@@ -138,17 +73,9 @@ public class CameraThread extends Thread
 //					}
 //				}
 				
-				/*************************Chooses The GuideLines TO Show && Rotation***********************************/
+				/*************************Streams***********************************/
 				
-				if(showGearGuider  && !isSystemsCamera)
-				{
-					screen.stream(
-							screen.DrawGuideLines(cameras.GetStream() , gls.get("GearGuider")));
-				}
-				else
-				{
-					screen.stream(cameras.GetStream());
-				}
+				screen.stream(cameras.GetStream());
 				
 			}
 			else
