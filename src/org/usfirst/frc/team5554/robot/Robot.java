@@ -19,6 +19,7 @@ public class Robot extends IterativeRobot {
 	private Shooter shooter;
 	private Feeder feeder;
 	private Climb climber;
+	//private GearHolder gearsInc;
 	private CameraThread streamer;
 	
 	/****************************************Joysticks********************************************/
@@ -36,7 +37,7 @@ public class Robot extends IterativeRobot {
 	
 	public static boolean isInShootingMode;
 	
-	//private boolean ignoreButton4 = false; 
+	private boolean ignoreButton4 = false; 
 	
 	
 	
@@ -63,6 +64,7 @@ public class Robot extends IterativeRobot {
 		Robot.isInShootingMode = false;
 		feeder = new Feeder(RobotMap.MOTOR_FEEDER);
 		climber = new Climb(RobotMap.MOTOR_CLIMBER_ONE, RobotMap.MOTOR_CLIMBER_TWO);
+		//gearsInc = new GearHolder(RobotMap.GEAR_MICROSWITCH_PORT , RobotMap.LEDS_PORT , 4);
 		
 		/**********************************Joysticks Declaration****************************************************/
 		
@@ -72,7 +74,7 @@ public class Robot extends IterativeRobot {
 		
 		/**********************************Cameras******************************************************************/
 		
-		streamer = new CameraThread(xbox);
+		streamer = new CameraThread(xbox,rightJoy);
 		streamer.start();
 		
 		/***********************************Autonomous Options***********************************************/
@@ -113,10 +115,11 @@ public class Robot extends IterativeRobot {
 		CameraThread.toSwitch = true;
 		
 		driver.enable();
-		//if(driver.isInverted() == false)
-		//{
-			//driver.invert();
-		//}
+		
+		if(driver.isInverted() == false)
+		{
+			driver.invert();
+		}
 	}
 
 	@Override
@@ -126,24 +129,22 @@ public class Robot extends IterativeRobot {
 
 		driver.TankDrive(leftJoy.getY() , rightJoy.getY() , rightJoy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS));  //lowers the sensitivity of the turns
 		
-    	//if(rightJoy.getRawButton(RobotMap.JOYSTICK_SWITCH_FRONT) && ignoreButton4 == false)
-    	//{
-    		//ignoreButton4 = true;
+    	if(rightJoy.getRawButton(RobotMap.JOYSTICK_SWITCH_FRONT) && ignoreButton4 == false)
+    	{
+    		ignoreButton4 = true;
 			
-    		//driver.invert();
-    	//}
-    	//else if(!rightJoy.getRawButton(RobotMap.JOYSTICK_SWITCH_FRONT))
-    	//{
-    	//	ignoreButton4 = false;
-    	//}
+    		driver.invert();
+    	}
+    	else if(!rightJoy.getRawButton(RobotMap.JOYSTICK_SWITCH_FRONT))
+    	{
+    		ignoreButton4 = false;
+    	}
 		
 		/****************************************** Shooter&Scramble ********************************************/
 		
 		double shooterSlider = leftJoy.getRawAxis(RobotMap.JOYSTICK_SLIDER_AXIS); 
 		
 		shooterSlider = (-shooterSlider+1)/2;
-		
-		System.out.println(shooterSlider);
 		
 		//Shooter
 		if(xbox.getRawAxis(RobotMap.XBOX_JOYSTICK_AUTO_SHOOT) > 0.15)
@@ -153,7 +154,7 @@ public class Robot extends IterativeRobot {
 		}
 		else if(xbox.getRawButton(RobotMap.XBOX_JOYSTICK_REVERSE_SHOOT))
 		{
-			shooter.shoot(-0.4); //was -0.4
+			shooter.shoot(-0.4); 
 		}
 		else
 		{
@@ -191,7 +192,7 @@ public class Robot extends IterativeRobot {
     	
     	/**************************************** Gear Holder ******************************************/
 	
-		/////////////////////////////////////////////////////////////////////////////////////////////////
+		//gearsInc.isGearIn();
 		
 		/****************************************** Climbing *******************************************/
 		

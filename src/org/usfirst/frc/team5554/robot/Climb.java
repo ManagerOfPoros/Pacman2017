@@ -13,7 +13,7 @@ public class Climb {
 		climbertwo = new Victor(climberPortTwo);
 	}
 	
-	public void climb(double speed) //INFO: First press activates climbing, second press stops climbing.
+	public void climb(double speed) 
 	{
 		climber.set(-speed);
 		climbertwo.set(speed);

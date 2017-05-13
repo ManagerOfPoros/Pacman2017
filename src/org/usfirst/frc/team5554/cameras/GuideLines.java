@@ -4,12 +4,12 @@ import org.opencv.core.Scalar;
 
 public class GuideLines 
 {
-	private int glXLeft;
-	private int glXRight;
-	private int glYLeft;
-	private int glYRight;
-	private Scalar glColor;
-	private int glThickness;
+	private int xLeft;
+	private int xRight;
+	private int yUp;
+	private int yDown;
+	private Scalar color;
+	private int thickness;
 	
 	private boolean isMax = false;
 	private int maxRange;
@@ -18,29 +18,29 @@ public class GuideLines
 	
 	public GuideLines(int xLeft , int xRight , int yUp , int yDown , Scalar color, int thickness)
 	{
-		glXLeft = xLeft;
-		glXRight = xRight;
-		glYLeft = yUp;
-		glYRight = yDown;
-		glColor = color;
-		glThickness = thickness;
+		this.xLeft = xLeft;
+		this.xRight = xRight;
+		this.yUp = yUp;
+		this.yDown = yDown;
+		this.color = color;
+		this.thickness = thickness;
 	}
 	
 	public void NarrowWidth(int narrow)
 	{
 		if(!isMin||!(this.GetLeftX()+this.minRange >= this.GetRightX()))
 		{
-			glXLeft = glXLeft+narrow;
-			glXRight = glXRight-narrow;
+			xLeft = xLeft+narrow;
+			xRight = xRight-narrow;
 		}
 	}
 	
 	public void DialateWidth(int dialate)
 	{
-		if(!isMax||!(Math.abs(this.glXLeft - this.glXRight) >= this.maxRange))
+		if(!isMax||!(Math.abs(this.xLeft - this.xRight) >= this.maxRange))
 		{
-			glXLeft = glXLeft-dialate;
-			glXRight = glXRight+dialate;
+			xLeft = xLeft-dialate;
+			xRight = xRight+dialate;
 		}
 	}
 	
@@ -69,44 +69,44 @@ public class GuideLines
 	
 	public double GetDistance(double FocalLength, double objectwidth)
 	{
-		int pixDistance = Math.abs(this.glXLeft - this.glXRight);
+		int pixDistance = Math.abs(this.xLeft - this.xRight);
 		
 		return (objectwidth*FocalLength)/pixDistance;
 	}
 	
 	public int GetPixDis()
 	{
-		return Math.abs(this.glXLeft - this.glXRight);
+		return Math.abs(this.xLeft - this.xRight);
 	}
 	
 	public int GetLeftX()
 	{
-		return glXLeft;
+		return xLeft;
 	}
 	
 	public int GetRightX()
 	{
-		return glXRight;
+		return xRight;
 	}
 	
-	public int GetLeftY()
+	public int GetUpY()
 	{
-		return glYLeft;
+		return yUp;
 	}
 	
-	public int GetRightY()
+	public int GetDownY()
 	{
-		return glYRight;
+		return yDown;
 	}
 	
 	public int GetThickness()
 	{
-		return glThickness;
+		return thickness;
 	}
 	
 	public Scalar GetColor()
 	{
-		return glColor;
+		return color;
 	}
 	
 }

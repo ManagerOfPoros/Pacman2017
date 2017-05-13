@@ -50,7 +50,8 @@ public class RobotMap {
     public final static int RIGHT_ENCODER_CHANNELB = 0;
     public final static int SHOOTER_ENCODER_CHANNELA = 1;
     public final static int SHOOTER_ENCODER_CHANNELB = 2;
-//    public final static int GEAR_MICROSWITCH_PORT =  8;
+    public final static int GEAR_MICROSWITCH_PORT =  8;
+    public final static int LEDS_PORT =  10;
     public static final SPI.Port GYRO_PORT  = SPI.Port.kOnboardCS0;
     
 /*****************Encoder Values*********************************************************/

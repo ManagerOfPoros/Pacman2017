@@ -25,14 +25,20 @@ public class VideoBox
 	
 	public Mat DrawGuideLines(Mat mat , GuideLines gl)
 	{
-		Imgproc.line(mat, new Point(gl.GetLeftX(),gl.GetLeftY()) , new Point(gl.GetLeftX(),gl.GetRightY()),gl.GetColor(),gl.GetThickness());
-		Imgproc.line(mat, new Point(gl.GetRightX(),gl.GetLeftY()) , new Point(gl.GetRightX(),gl.GetRightY()),gl.GetColor(),gl.GetThickness());
+		Imgproc.line(mat, new Point(gl.GetLeftX(),gl.GetUpY()) , new Point(gl.GetLeftX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
+		Imgproc.line(mat, new Point(gl.GetRightX(),gl.GetUpY()) , new Point(gl.GetRightX(),gl.GetDownY()),gl.GetColor(),gl.GetThickness());
 		return mat;
 	}
 	
-	public Mat DrawLine(Mat mat , GuideLines gl)
+	public Mat DrawUpperGL(Mat mat , GuideLines gl)
 	{
-		Imgproc.line(mat , new Point(gl.GetLeftX() , gl.GetLeftY()) , new Point(gl.GetRightX() , gl.GetRightY()) , gl.GetColor() ,  gl.GetThickness());
+		Imgproc.line(mat , new Point(gl.GetLeftX() , gl.GetUpY()) , new Point(gl.GetRightX() , gl.GetUpY()) , gl.GetColor() ,  gl.GetThickness());
+		return mat;
+	}
+	
+	public Mat DrawLowerGL(Mat mat , GuideLines gl)
+	{
+		Imgproc.line(mat , new Point(gl.GetLeftX() , gl.GetDownY()) , new Point(gl.GetRightX() , gl.GetDownY()) , gl.GetColor() ,  gl.GetThickness());
 		return mat;
 	}
 	

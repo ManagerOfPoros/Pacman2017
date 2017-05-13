@@ -59,7 +59,7 @@ public class DistanceGyroDrive extends Command{
 			{
 				return false;
 			}
-		else                                     // for the code being generic
+		else                                     
 		{
 			if(driver.GetLeftEncValue() <= distance)
 			{

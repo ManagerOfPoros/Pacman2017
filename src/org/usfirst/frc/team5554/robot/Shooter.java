@@ -61,7 +61,7 @@ public class Shooter
 		
 		System.out.println(shooter1.getEncVelocity());
 		
-		final int RPM = 1500; //was 200
+		final int RPM = 1500; 
         /* Speed mode */
         targetSpeed = speed * RPM; /* 1500 RPM in either direction */
         
@@ -76,51 +76,6 @@ public class Shooter
 	public double GetSpeed()
 	{
 		return velocity;
-	}
-	
-	//***************For tests only*************************//
-	
-	public void SetSpeed(double speed)
-	{
-		velocity = speed;
-	}
-	
-	public void setI(double I)
-	{
-		shooter1.setI(I);
-	}
-	
-	public double getI(){
-		return shooter1.getI();
-	}
-
-	public void setD(double D)
-	{
-		shooter1.setD(D);
-	}
-	
-	public double getD(){
-		return shooter1.getD();
-	}
-
-	public void setP(double P)
-	{
-		shooter1.setP(P);
-	}
-	
-	public double getP(){
-		return shooter1.getP();
-	}
-	
-	public void tweakPID(double incroment){
-		if(incroment + shooter1.getD() >= 1.0) incroment += 1.0 + shooter1.getD();
-		if(incroment + shooter1.getD() <= -1.0) incroment += -1.0 + shooter1.getD();
-		shooter1.setD(shooter1.getD() + incroment);
-		
-	}
-	public int getEncCount()
-	{
-		return shooter1.getEncPosition();
 	}
 
 }
