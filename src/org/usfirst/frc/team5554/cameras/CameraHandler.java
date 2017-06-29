@@ -10,28 +10,52 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoException;
 import edu.wpi.first.wpilibj.Joystick;
 
-
-public class CameraHandler 
+/**
+ * This class handles the cameras in the robot, it can switch between them
+ * and set their settings.
+ * Stores cameras connected to the robot in a HashMap with a value.
+ * Holds a CvSink object that listens to only 1 camera stream at a time and can sent the stream.
+ *
+ */
+public class CameraHandler
 {
 	private Map<Integer , UsbCamera> cameras = new HashMap<>();
 	private CvSink cvSink = new CvSink("stream");
 	private int currentCamera; //The port of the current camera
 	private Mat mat;
-	private int fps = 20;
-	
+
+	private int fps = 22;
+
+	/**
+	 * Creates a camera handler that can stream and switch between a specified number of cameras
+	 * with a specified resolution.
+	 *
+	 * @param ports Number of cameras
+	 * @param width Resolution width
+	 * @param height Resolution Height
+	 */
 	public CameraHandler(int ports,int width, int height)
 	{
-		currentCamera = 0;
-		mat = new Mat();
+		this.currentCamera = 0;
+		this.mat = new Mat();
+
 		for(int i = 0; i < ports; i++)
 		{
 			AddCamera(i, width, height , 20 , 50);
 		}
 		cvSink.setSource(cameras.get(0));
 	}
-	
-	
-	
+
+
+	/**
+	 * Adds a new UsbCamera object to the cameras HashMap with an index.
+	 *
+	 * @param idx Camera index
+	 * @param width Resolution width
+	 * @param height Resolution Height
+	 * @param fps The frames the camera will provide per second
+	 * @param brightness Camera's brightness
+	 */
 	private void AddCamera(int idx, int width , int height , int fps , int brightness)
 	{
 		if(!cameras.containsKey(idx))
@@ -43,7 +67,7 @@ public class CameraHandler
 				cam.setFPS(fps);
 				cam.setBrightness(brightness);
 				cameras.put(idx, cam);
-				
+
 			}
 			catch(VideoException e)
 			{
@@ -56,61 +80,83 @@ public class CameraHandler
 			System.out.println("Camera on port " + idx + " is already defined.");
 		}
 	}
-	
+
+	/**
+	 * Sets the camera the camera handler object will stream.
+	 *
+	 * @param idx The index of the camera in the camera handler's hash map
+	 */
 	public void SetStreamer(int idx)
 	{
 		if(idx != currentCamera)
 		{
-			
-			if(fps > 20)
+
+			if(fps > 25)
 			{
 				cameras.get(currentCamera).setFPS(0);
 				cameras.get(idx).setFPS(this.fps);
 			}
-			
+
 			cvSink.setSource(cameras.get(idx));
-						
+
 			currentCamera = idx;
 		}
 	}
-	
+
+	/**
+	 * Gets the camera stream
+	 *
+	 * @return The current frame
+	 */
 	public Mat GetStream()
 	{
 		cvSink.grabFrame(mat);
 		return mat;
 	}
-	
-	public void DeleteHandler()
-	{
-		cvSink = null;
-		cameras.clear();
-	}
-	
+
+	/**
+	 * A function that picks and switches between the live camera according to the clicked button
+	 *
+	 * @param liveCamera The current live camera.
+	 * @param cameraButtons An array of buttons indexes, a button's index in the array is the index of the camera he will turn on
+	 * @param joy The joystick
+	 * @param cameras Number of to switch from cameras
+	 * @return
+	 */
 	public static int PickCamera(int liveCamera, int[] cameraButtons , Joystick joy, int cameras)
 	{
 		for(int i = 0; i < cameras ; i++)
-		{			
+		{
 			if(joy.getRawButton(cameraButtons[i]))
 			{
 				liveCamera = i;
 			}
 		}
-		
+
 		return liveCamera;
 	}
-	
+
+	/**
+	 * A function that picks and switches between the live camera according to the POV
+	 *
+	 * @param liveCamera The current live camera.
+	 * @param cameraButtons An array of POV degrees, a degree index in the array is the index of the camera he will turn on
+	 * @param joy The joystick
+	 * @param cameras Number of to switch from cameras
+	 * @return The picked live camera
+	 */
 	public static int PickCamera(int liveCamera, int[] pov , Joystick joy, int cameras , int povIndex)
 	{
 		for(int i = 0; i < cameras ; i++)
-		{			
+		{
 			if(joy.getPOV() == pov[i])
 			{
 				liveCamera = i;
 			}
 		}
-		
+
 		return liveCamera;
 	}
-	
-	
+
+
 }

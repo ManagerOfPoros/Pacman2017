@@ -6,19 +6,23 @@ import org.usfirst.frc.team5554.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class PlaceFrontGear extends CommandGroup {
+/**
+*
+* This command makes Pacman place a gear in the front pin
+*
+*/
+public class PlaceFrontGear extends CommandGroup
+{
 
-    public PlaceFrontGear(Driver driver) 
+	/**
+	 * Creates the command with a driver object containing the robot's speed controllers and encoders
+	 *
+	 * @param driver The driver object
+	 */
+    public PlaceFrontGear(Driver driver)
     {
-    	///////////////////////////////RightEnc////////////////////////////////
 		driver.CalibrateGyro();
 		addSequential(new Timeout(0.1));
-		addSequential(new DistanceGyroDrive(0.35, driver , RobotMap.DISTANCE_FROM_ALLIANCE_WALL_TO_AIRSHIP));
-
-//    	///////////////////////////////LeftEnc////////////////////////////////
-//		driver.CalibrateGyro();
-//		addSequential(new Timeout(0.1));
-//		addSequential(new DistanceGyroDrive(0.35, driver , RobotMap.DISTANCE_FROM_ALLIANCE_WALL_TO_AIRSHIP+7.5));
-
+		addSequential(new DistanceGyroDrive(0.35, driver , RobotMap.DISTANCE_FROM_ALLIANCE_WALL_TO_AIRSHIP,0.00245));
     }
 }

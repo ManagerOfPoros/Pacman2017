@@ -6,66 +6,102 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 
+/**
+ * This class handles the robot's driver system.
+ * It contains the robot's driving speed controllers, and works with their encoders.
+ * It also works the robot gyro and can read its values and turn using it.
+ *
+ */
 public class Driver extends RobotDrive
 {
 	private Encoder leftEncoder;
 	private Encoder rightEncoder;
 	private ADXRS450_Gyro gyro;
 	private boolean isInvert = true;
-	
+
 	private boolean isEnabled = true;
-	
-	
+
+
 	/**
-	 * The constructor configurates the motors objects to certain ports
-	 * @since 15/1/2017
-	 * @param MOTOR_LEFT port for left motor
-	 * @param MOTOR_RIGHT port for right motor
-	 * Author: Gil Meri
+	 * The constructor configures the motors objects to certain ports, configurates the robot encoders and gyro
+	 * @param left The robot's left side speed controller
+	 * @param right The robot's right side speed controller
+	 * @param leftEnc The robot's left side encoder
+	 * @param rightEnc The robot's right side encoder
+	 * @param gyro The robot's gyro
 	 */
-	public Driver(Motor left, Motor right , Encoder leftEnc, Encoder rightEnc, ADXRS450_Gyro gyro) 
-	{			
+	public Driver(Motor left, Motor right , Encoder leftEnc, Encoder rightEnc, ADXRS450_Gyro gyro)
+	{
 		super(left , right);
-		
-		setSafetyEnabled(false);
-		
+
 		this.leftEncoder = leftEnc;
 		this.rightEncoder = rightEnc;
-		
-		this.gyro = gyro;		
+
+		this.gyro = gyro;
 		gyro.reset();
 	}
-	
-	public Driver(Motor left, Motor right , ADXRS450_Gyro gyro) 
-	{			
-		super(left , right);
-		
-		setSafetyEnabled(false);
-		
-		this.gyro = gyro;		
-		gyro.reset();
-	}
-	
+
 	/**
-	 * This function in charge of the movement of the robot with the joystick
-	 * @since 15/1/2017
-	 * @param y The value of the joystick's y axis
-	 * @param x The value of the joystick's x axis (used for turns instead of z)
-	 * @param slider The value of the joystick's slider axis
-	 * @author Gil Meri
+	 * The constructor configures the motors objects to certain ports and configures the robot encoders\
+	 * @param left The robot's left side speed controller
+	 * @param right The robot's right side speed controller
+	 * @param leftEnc The robot's left side encoder
+	 * @param rightEnc The robot's right side encoder
 	 */
-	public void ArcadeDrive(double slider, double speed , double turn) 
+	public Driver(Motor left, Motor right , Encoder leftEnc, Encoder rightEnc)
+	{
+		super(left , right);
+
+		this.leftEncoder = leftEnc;
+		this.rightEncoder = rightEnc;
+	}
+
+	/**
+	 * The constructor configures the motors objects to certain ports and the robot's gyro
+	 * @param left The robot's left side speed controller
+	 * @param right The robot's right side speed controller
+	 * @param gyro The robot's gyro
+	 */
+	public Driver(Motor left, Motor right , ADXRS450_Gyro gyro)
+	{
+		super(left , right);
+
+		this.gyro = gyro;
+		gyro.reset();
+	}
+
+	/**
+	 * The constructor configures the motors objects to certain ports
+	 * @param left The robot's left side speed controller
+	 * @param right The robot's right side speed controller
+	 */
+	public Driver(Motor left, Motor right)
+	{
+		super(left , right);
+	}
+
+
+	/**
+	 * This function drives the robot according to a speed value and a turn value
+	 * (usually sent from 2 joystick axis).
+	 *
+	 * @param slider A value that controlles the max output of the driver system
+	 * (function as a sensitivity)
+	 * @param speed The speed of the robot
+	 * @param turn The angle the robot will drive in
+	 */
+	public void ArcadeDrive(double slider, double speed , double turn)
 	{
 		if(isEnabled)
 		{
 			slider = (-slider+1)/2;
-			
+
 			//Gives us freedom to manipulte the front of the robot.
 			//If +slider and -slider can change the front of the motor since
 			//they determine if the scalar is from 0-1 or from -1 to 0.
-			
+
 			setSafetyEnabled(false);
-			
+
 			if(isInvert == false)
 			{
 				setMaxOutput(slider);
@@ -76,24 +112,33 @@ public class Driver extends RobotDrive
 				setMaxOutput(-slider);
 				arcadeDrive(speed , turn);
 			}
-			
+
 		}
-		
+
 	}
-	
-	public void TankDrive(double leftValue, double rightValue , double slider) 
+
+	/**
+	 * This function drives the robot according to a left value and a right value,
+	 * every value is incharge of every side's speed.
+	 * (usually sent from 2 joysticks's main axis)
+	 * @param leftValue The left side speed
+	 * @param rightValue The right side speed
+	 * @param slider A value that controlles the max output of the driver system
+	 * (function as a sensitivity)
+	 */
+	public void TankDrive(double leftValue, double rightValue , double slider)
 	{
 		if(isEnabled)
 		{
-			
+
 			slider = (-slider+1)/2;
-			
+
 			//Gives us freedom to manipulte the front of the robot.
 			//If +slider and -slider can change the front of the motor since
 			//they determine if the scalar is from 0-1 or from -1 to 0.
-			
+
 			setSafetyEnabled(false);
-			
+
 			if(isInvert == false)
 			{
 				setMaxOutput(slider);
@@ -104,141 +149,233 @@ public class Driver extends RobotDrive
 				setMaxOutput(-slider);
 				tankDrive(leftValue , rightValue);
 			}
-			
+
 		}
-		
+
 	}
-	
-	public void autonomousDrive(double speed , double curve , boolean inverted)
+
+	/**
+	 * Drives the robot according to a speed value and a turn value
+	 * this function is used for driving the robot not using a joystick.
+	 * (Mostly used for the autonomous period)
+	 *
+	 * @param speed The speed of the robot
+	 * @param curve The angle the robot will drive in
+	 */
+	public void autonomousDrive(double speed , double curve)
 	{
-		
+
 		setMaxOutput(-1.0);
 		setSafetyEnabled(false);
 		drive(speed, curve);
-		
+
 	}
-	
-	public void setExpiration(double timeout)
+
+	/**
+	 * Spins the robot a certain amount of degrees using the gyro.
+	 * To reach the accurate degree, uses a PID controller.
+	 *
+	 * @param degrees The degrees the robot will turn
+	 */
+	public void Spin(double degrees)
 	{
-		setExpiration(timeout);
-	}
-	
-	
-	public void Spin(double degrees , boolean invertLeft, boolean invertRight)
-	{			
 		if(isEnabled)
 		{
 			gyro.reset();
-		
+
 			((Motor)this.m_rearLeftMotor).SetFeedbackDevice(gyro);
 			((Motor)this.m_rearRightMotor).SetFeedbackDevice(gyro);
-		
+
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
-			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);		
-		
+			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);
+
 			((Motor)this.m_rearRightMotor).SetPID(0.01, 0.000, 0.002);
 			((Motor)this.m_rearLeftMotor).SetPID(0.01, 0.000, 0.002);
-		
-			((Motor)this.m_rearRightMotor).GoDistance(degrees , invertRight);
-			((Motor)this.m_rearLeftMotor).GoDistance(degrees , invertLeft);
+
+			((Motor)this.m_rearRightMotor).StartPIDLoop(degrees);
+			((Motor)this.m_rearLeftMotor).StartPIDLoop(degrees);
 		}
-	}	
-		
-	
-	public void DriveDistance(double leftDistance, double rightDistance, boolean invertDriver)
+	}
+
+
+	/**
+	 * Drives the robot a certain amount of distance.
+	 * To reach the accurate distance, uses a PID controller
+	 *
+	 * @param leftDistance The distance the left side will drive (in the left encoder units)
+	 * @param rightDistance The distance the right side will drive (in the right encoder units)
+	 */
+	public void DriveDistance(double leftDistance, double rightDistance)
 	{
 		if(isEnabled)
 		{
 			((Motor)this.m_rearRightMotor).SetFeedbackDevice(rightEncoder);
 			((Motor)this.m_rearLeftMotor).SetFeedbackDevice(leftEncoder);
-			
+
 			((Motor)this.m_rearRightMotor).SetPIDType(PIDSourceType.kDisplacement);
 			((Motor)this.m_rearLeftMotor).SetPIDType(PIDSourceType.kDisplacement);
-			
+
 			((Motor)this.m_rearRightMotor).SetPID(0.003, 0, 0);
 			((Motor)this.m_rearLeftMotor).SetPID(0.003, 0, 0);
-			
-			((Motor)this.m_rearRightMotor).GoDistance(rightDistance , invertDriver);
-			((Motor)this.m_rearLeftMotor).GoDistance(leftDistance , invertDriver);
+
+			((Motor)this.m_rearRightMotor).StartPIDLoop(rightDistance);
+			((Motor)this.m_rearLeftMotor).StartPIDLoop(leftDistance);
 		}
 	}
 
-	public boolean LeftOnTarget(double tolerance)
+	/**
+	 * Returns if the left motor PID controller error is in the tolerable range
+	 *
+	 * @return if the left motor PID controller error is in the tolerable range
+	 */
+	public boolean LeftOnTarget()
 	{
-		return ((Motor)this.m_rearLeftMotor).onTarget(tolerance);
+		return ((Motor)this.m_rearLeftMotor).onTarget();
 	}
-	
-	public boolean RightOnTarget(double tolerance)
+
+	/**
+	 * Returns if the right motor PID controller error is in the tolerable range
+	 *
+	 * @return if the right motor PID controller error is in the tolerable range
+	 */
+	public boolean RightOnTarget()
 	{
-		return ((Motor)this.m_rearRightMotor).onTarget(tolerance);
+		return ((Motor)this.m_rearRightMotor).onTarget();
 	}
-	
-	public void enable()
+
+	/**
+	 * Set the absolute error which is considered tolerable for use with OnTarget for both sides.
+	 *
+	 * @param tolerance In units of the input, the absolute tolerable error
+	 */
+	public void setAbsTolerance(double tolerance)
 	{
-		this.isEnabled = true;
+		((Motor)this.m_rearLeftMotor).SetAbsTolernace(tolerance);
+		((Motor)this.m_rearRightMotor).SetAbsTolernace(tolerance);
 	}
-	
-	public void disable()
+
+
+	/**
+	 * Enables or disables the driver
+	 * (This function won't affect anything if a PID controller is running)
+	 *
+	 * @param enabled If true enables the robot driver
+	 */
+	public void setEnable(boolean enabled)
 	{
-		this.isEnabled = false;
-		this.m_rearLeftMotor.set(0);
-		this.m_rearRightMotor.set(0);
-		
+		if(enabled)
+		{
+			this.isEnabled = enabled;
+		}
+		else
+		{
+			this.m_rearLeftMotor.set(0);
+			this.m_rearRightMotor.set(0);
+			this.isEnabled = enabled;
+		}
 	}
-	
-	public void disController()
+
+
+	/**
+	 * Enables or disables the right motor and left PID Controller
+	 *
+	 *@param enabled If true, enables both controllers
+	 */
+	public void setControllerEnb(boolean enabled)
 	{
-		((Motor)this.m_rearRightMotor).disController();
-		((Motor)this.m_rearLeftMotor).disController();
+		if(enabled)
+		{
+			((Motor)this.m_rearRightMotor).enableController();
+			((Motor)this.m_rearLeftMotor).enableController();
+		}
+		else
+		{
+			((Motor)this.m_rearRightMotor).disController();
+			((Motor)this.m_rearLeftMotor).disController();
+		}
 	}
-	
-	public void enableController()
-	{
-		((Motor)this.m_rearRightMotor).enableController();
-		((Motor)this.m_rearLeftMotor).enableController();
-	}
-	
-	public double GetError()
+
+
+	/**
+	 * Gets the right motor PID Controller error
+	 *
+	 * @return The right motor PID Controller error
+	 */
+	public double GetRightError()
 	{
 		return ((Motor)this.m_rearRightMotor).GetError();
 	}
-	
-	public boolean OnTarget(double tolerance)
+
+	/**
+	 * Gets the left motor PID Controller error
+	 *
+	 * @return The left motor PID Controller error
+	 */
+	public double GetLeftError()
 	{
-		return ((Motor)this.m_rearRightMotor).onTarget(tolerance);
+		return ((Motor)this.m_rearLeftMotor).GetError();
 	}
-	
+
+	/**
+	 * Gets the driver's gyro current angle
+	 *
+	 * @return The driver's gyro current angle
+	 */
 	public double GetAngle()
 	{
 		return gyro.getAngle();
 	}
-	
+
+	/**
+	 * Calibrates the driver's gyro
+	 */
 	public void CalibrateGyro()
 	{
 		gyro.calibrate();
 	}
-	
+
+	/**
+	 * Resets the driver's gyro
+	 */
 	public void ResetGyro()
 	{
 		gyro.reset();
 	}
-	
+
+	/**
+	 * Resets the driver's encoders
+	 *
+	 */
 	public void ResetEncoders()
 	{
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}
-	
+
+	/**
+	 * Gets the current left encoder count
+	 *
+	 * @return The current left encoder count
+	 */
 	public double GetLeftEncValue()
 	{
 		return leftEncoder.getDistance();
 	}
-	
+
+	/**
+	 * Gets the current right encoder count
+	 *
+	 * @return The current right encoder count
+	 */
 	public double GetRightEncValue()
 	{
 		return rightEncoder.getDistance();
 	}
-	
+
+	/**
+	 * Inverts the driver object front of the robot
+	 *
+	 */
 	public void invert()
 	{
 		if(this.isInvert == false)
@@ -250,13 +387,18 @@ public class Driver extends RobotDrive
 			this.isInvert = false;
 		}
 	}
-	
+
+	/**
+	 * Gets if the driver has been inverted
+	 *
+	 *@return True is the driver has been inverted
+	 */
 	public boolean isInverted()
 	{
 		return isInvert;
 	}
-	
-	
+
+
 
 
 

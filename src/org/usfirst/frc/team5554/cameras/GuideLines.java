@@ -2,7 +2,12 @@ package org.usfirst.frc.team5554.cameras;
 
 import org.opencv.core.Scalar;
 
-public class GuideLines 
+/**
+ * This class holds 4 coordinates that represents guide lines and the ability to close and open the guide lines
+ * with a limitation.
+ *
+ */
+public class GuideLines
 {
 	private int xLeft;
 	private int xRight;
@@ -10,12 +15,20 @@ public class GuideLines
 	private int yDown;
 	private Scalar color;
 	private int thickness;
-	
-	private boolean isMax = false;
+
 	private int maxRange;
-	private boolean isMin = false;
 	private int minRange;
-	
+
+	/**
+	 * Creates an object that holds the characteristics of a guide line
+	 *
+	 * @param xLeft The left x coordinate of the guide line
+	 * @param xRight The right x coordinate of the guide line
+	 * @param yUp The Upper y coordinate of the guide line
+	 * @param yDown The Down y coordinate of the guide line
+	 * @param color The guide line' color
+	 * @param thickness The guide line's thickness
+	 */
 	public GuideLines(int xLeft , int xRight , int yUp , int yDown , Scalar color, int thickness)
 	{
 		this.xLeft = xLeft;
@@ -25,88 +38,162 @@ public class GuideLines
 		this.color = color;
 		this.thickness = thickness;
 	}
-	
+
+
+	/**
+	 * Narrows the distance between the two lines
+	 *
+	 * @param narrow The pixels the distance will be narrowed
+	 */
 	public void NarrowWidth(int narrow)
 	{
-		if(!isMin||!(this.GetLeftX()+this.minRange >= this.GetRightX()))
+		if(!(this.GetLeftX()+this.minRange >= this.GetRightX()))
 		{
 			xLeft = xLeft+narrow;
 			xRight = xRight-narrow;
 		}
 	}
-	
-	public void DialateWidth(int dialate)
+
+	/**
+	 * Dilates the distance between the two lines
+	 *
+	 * @param dilate The pixels the distance will be dilated
+	 */
+	public void DialateWidth(int dilate)
 	{
-		if(!isMax||!(Math.abs(this.xLeft - this.xRight) >= this.maxRange))
+		if(!(Math.abs(this.xLeft - this.xRight) >= this.maxRange))
 		{
-			xLeft = xLeft-dialate;
-			xRight = xRight+dialate;
+			xLeft = xLeft-dilate;
+			xRight = xRight+dilate;
 		}
 	}
-	
+
+	/**
+	 * Sets The maximum and minimum distance the guide lines can get to each other
+	 *
+	 * @param minDis The maximum distance  between the guide lines
+	 * @param maxDis The minimum distance between the guide lines
+	 */
 	public void SetBoundries(int minDis , int maxDis)
 	{
-		SetBoundries(minDis , maxDis , true , true);
+		SetRange(minDis , maxDis);
 	}
-	
+
+	/**
+	 * Sets the maximum distance between the guide lines
+	 *
+	 * @param range The maximum distance
+	 */
 	public void MaxRange(int range)
 	{
-		SetBoundries(this.minRange, range, this.isMin, true);
+		SetRange(this.minRange, range);
 	}
-	
+
+	/**
+	 * Sets the minimum distance between the guide lines
+	 *
+	 * @param range The minimum distance
+	 */
 	public void MinRange(int range)
 	{
-		SetBoundries(range, this.maxRange, true, this.isMax);
+		SetRange(range, this.maxRange);
 	}
-	
-	private void SetBoundries(int minDis, int maxDis, boolean isMin, boolean isMax)
+
+	/**
+	 * Sets The maximum and minimum distance the guide lines can get to each other
+	 *
+	 * @param minDis The maximum distance  between the guide lines
+	 * @param maxDis The minimum distance between the guide lines
+	 */
+	private void SetRange(int minDis, int maxDis)
 	{
 		this.minRange = minDis;
 		this.maxRange = maxDis;
-		this.isMin = isMin;
-		this.isMax = isMax;
 	}
-	
+
+	/**
+	 * Gets the real distance between the camera and the object in between the guide lines according to the object's width and the camera's focal length
+	 * using triangle similarity
+	 *
+	 * @param FocalLength The cameras focal length
+	 * @param objectwidth The real object's width
+	 * @return The distance from
+	 */
 	public double GetDistance(double FocalLength, double objectwidth)
 	{
 		int pixDistance = Math.abs(this.xLeft - this.xRight);
-		
+
 		return (objectwidth*FocalLength)/pixDistance;
 	}
-	
-	public int GetPixDis()
+
+	/**
+	 * Gets the distance in pixels between the two guide lines
+	 *
+	 * @return The distance in pixels between the two guide lines
+	 */
+	public int PixelDistance()
 	{
 		return Math.abs(this.xLeft - this.xRight);
 	}
-	
+
+	/**
+	 *Gets the left x coordinate of the guide line
+	 *
+	 * @return The left x coordinate of the guide line
+	 */
 	public int GetLeftX()
 	{
 		return xLeft;
 	}
-	
+
+	/**
+	 *Gets the right x coordinate of the guide line
+	 *
+	 * @return The right x coordinate of the guide line
+	 */
 	public int GetRightX()
 	{
 		return xRight;
 	}
-	
+
+	/**
+	 *Gets the upper y coordinate of the guide line
+	 *
+	 * @return The upper y coordinate of the guide line
+	 */
 	public int GetUpY()
 	{
 		return yUp;
 	}
-	
+
+	/**
+	 *Gets the lower y coordinate of the guide line
+	 *
+	 * @return The lower y coordinate of the guide line
+	 */
 	public int GetDownY()
 	{
 		return yDown;
 	}
-	
+
+	/**
+	 *Gets the guide line's thickness
+	 *
+	 * @return The guide line's thickness
+	 */
 	public int GetThickness()
 	{
 		return thickness;
 	}
-	
+
+	/**
+	 *Gets the guide line's color
+	 *
+	 * @return The guide line's color
+	 */
 	public Scalar GetColor()
 	{
 		return color;
 	}
-	
+
 }
